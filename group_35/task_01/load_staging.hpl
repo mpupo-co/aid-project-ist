@@ -21,123 +21,23 @@
   </notepads>
   <order>
     <hop>
-      <from>Maddison CSV file input</from>
-      <to>Table output</to>
+      <from>maddison_indicators CSV file input</from>
+      <to>maddison_indicators</to>
       <enabled>Y</enabled>
     </hop>
     <hop>
-      <from>Wdi CSV file input</from>
-      <to>Table output 2</to>
+      <from>wdi_indicators CSV file input 2</from>
+      <to>wdi_indicators</to>
       <enabled>Y</enabled>
     </hop>
     <hop>
-      <from>Events CSV file input </from>
-      <to>Table output 3</to>
+      <from>historical_events CSV file input 3</from>
+      <to>historical_events</to>
       <enabled>Y</enabled>
     </hop>
   </order>
   <transform>
-    <name>Events CSV file input </name>
-    <type>CSVInput</type>
-    <description/>
-    <distribute>Y</distribute>
-    <custom_distribution/>
-    <copies>1</copies>
-    <partitioning>
-      <method>none</method>
-      <schema_name/>
-    </partitioning>
-    <filename>/home/mpupo-co/MEIC/2026_27/AID/aid-project-ist/project_data_sources_2627/historical_events.csv</filename>
-    <filename_field/>
-    <rownum_field/>
-    <include_filename>N</include_filename>
-    <separator>,</separator>
-    <enclosure/>
-    <header>Y</header>
-    <buffer_size>50000</buffer_size>
-    <schemaDefinition/>
-    <ignoreFields>N</ignoreFields>
-    <lazy_conversion>Y</lazy_conversion>
-    <add_filename_result>N</add_filename_result>
-    <parallel>N</parallel>
-    <newline_possible>N</newline_possible>
-    <encoding>UTF-8</encoding>
-    <fields>
-      <field>
-        <name>year</name>
-        <type>Integer</type>
-        <format>#</format>
-        <currency>$</currency>
-        <decimal>.</decimal>
-        <group>,</group>
-        <length>15</length>
-        <precision>0</precision>
-        <trim_type>none</trim_type>
-      </field>
-      <field>
-        <name>country_iso3</name>
-        <type>String</type>
-        <format/>
-        <currency>$</currency>
-        <decimal>.</decimal>
-        <group>,</group>
-        <length>3</length>
-        <precision>-1</precision>
-        <trim_type>none</trim_type>
-      </field>
-      <field>
-        <name>country_name</name>
-        <type>String</type>
-        <format/>
-        <currency>$</currency>
-        <decimal>.</decimal>
-        <group>,</group>
-        <length>8</length>
-        <precision>-1</precision>
-        <trim_type>none</trim_type>
-      </field>
-      <field>
-        <name>event</name>
-        <type>String</type>
-        <format/>
-        <currency>$</currency>
-        <decimal>.</decimal>
-        <group>,</group>
-        <length>101</length>
-        <precision>-1</precision>
-        <trim_type>none</trim_type>
-      </field>
-      <field>
-        <name>category</name>
-        <type>String</type>
-        <format/>
-        <currency>$</currency>
-        <decimal>.</decimal>
-        <group>,</group>
-        <length>20</length>
-        <precision>-1</precision>
-        <trim_type>none</trim_type>
-      </field>
-      <field>
-        <name>economic_impact</name>
-        <type>String</type>
-        <format/>
-        <currency>$</currency>
-        <decimal>.</decimal>
-        <group>,</group>
-        <length>37</length>
-        <precision>-1</precision>
-        <trim_type>none</trim_type>
-      </field>
-    </fields>
-    <attributes/>
-    <GUI>
-      <xloc>128</xloc>
-      <yloc>304</yloc>
-    </GUI>
-  </transform>
-  <transform>
-    <name>Maddison CSV file input</name>
+    <name>maddison_indicators CSV file input</name>
     <type>CSVInput</type>
     <description/>
     <distribute>Y</distribute>
@@ -152,7 +52,7 @@
     <rownum_field/>
     <include_filename>N</include_filename>
     <separator>,</separator>
-    <enclosure/>
+    <enclosure>"</enclosure>
     <header>Y</header>
     <buffer_size>50000</buffer_size>
     <schemaDefinition/>
@@ -233,11 +133,11 @@
     <attributes/>
     <GUI>
       <xloc>128</xloc>
-      <yloc>112</yloc>
+      <yloc>128</yloc>
     </GUI>
   </transform>
   <transform>
-    <name>Table output</name>
+    <name>maddison_indicators</name>
     <type>TableOutput</type>
     <description/>
     <distribute>Y</distribute>
@@ -252,7 +152,7 @@
     <auto_update_table_structure>N</auto_update_table_structure>
     <change_column_types>N</change_column_types>
     <commit>1000</commit>
-    <connection>EcoHumDev</connection>
+    <connection>DevelopmentStg</connection>
     <drop_columns>N</drop_columns>
     <fields>
       <field>
@@ -284,149 +184,26 @@
     <only_when_have_rows>N</only_when_have_rows>
     <partitioning_daily>N</partitioning_daily>
     <partitioning_enabled>N</partitioning_enabled>
+    <partitioning_field/>
     <partitioning_monthly>Y</partitioning_monthly>
+    <return_field/>
     <return_keys>N</return_keys>
-    <schema>EcoHumDev</schema>
+    <schema>DevelopmentStg</schema>
     <specify_fields>Y</specify_fields>
-    <table>Maddison</table>
+    <table>maddison_indicators</table>
+    <tablename_field/>
     <tablename_in_field>N</tablename_in_field>
     <tablename_in_table>Y</tablename_in_table>
     <truncate>N</truncate>
     <use_batch>Y</use_batch>
     <attributes/>
     <GUI>
-      <xloc>272</xloc>
-      <yloc>112</yloc>
+      <xloc>336</xloc>
+      <yloc>128</yloc>
     </GUI>
   </transform>
   <transform>
-    <name>Table output 2</name>
-    <type>TableOutput</type>
-    <description/>
-    <distribute>Y</distribute>
-    <custom_distribution/>
-    <copies>1</copies>
-    <partitioning>
-      <method>none</method>
-      <schema_name/>
-    </partitioning>
-    <add_columns>N</add_columns>
-    <always_drop_and_recreate>N</always_drop_and_recreate>
-    <auto_update_table_structure>N</auto_update_table_structure>
-    <change_column_types>N</change_column_types>
-    <commit>1000</commit>
-    <connection>EcoHumDev</connection>
-    <drop_columns>N</drop_columns>
-    <fields>
-      <field>
-        <column_name>country_iso3</column_name>
-        <stream_name>country_iso3</stream_name>
-      </field>
-      <field>
-        <column_name>country_name</column_name>
-        <stream_name>country_name</stream_name>
-      </field>
-      <field>
-        <column_name>indicator_code</column_name>
-        <stream_name>indicator_code</stream_name>
-      </field>
-      <field>
-        <column_name>indicator_name</column_name>
-        <stream_name>indicator_name</stream_name>
-      </field>
-      <field>
-        <column_name>year</column_name>
-        <stream_name>year</stream_name>
-      </field>
-      <field>
-        <column_name>value</column_name>
-        <stream_name>value</stream_name>
-      </field>
-    </fields>
-    <ignore_errors>N</ignore_errors>
-    <only_when_have_rows>N</only_when_have_rows>
-    <partitioning_daily>N</partitioning_daily>
-    <partitioning_enabled>N</partitioning_enabled>
-    <partitioning_monthly>Y</partitioning_monthly>
-    <return_keys>N</return_keys>
-    <schema>EcoHumDev</schema>
-    <specify_fields>Y</specify_fields>
-    <table>Wdi</table>
-    <tablename_in_field>N</tablename_in_field>
-    <tablename_in_table>Y</tablename_in_table>
-    <truncate>N</truncate>
-    <use_batch>Y</use_batch>
-    <attributes/>
-    <GUI>
-      <xloc>272</xloc>
-      <yloc>208</yloc>
-    </GUI>
-  </transform>
-  <transform>
-    <name>Table output 3</name>
-    <type>TableOutput</type>
-    <description/>
-    <distribute>Y</distribute>
-    <custom_distribution/>
-    <copies>1</copies>
-    <partitioning>
-      <method>none</method>
-      <schema_name/>
-    </partitioning>
-    <add_columns>N</add_columns>
-    <always_drop_and_recreate>N</always_drop_and_recreate>
-    <auto_update_table_structure>N</auto_update_table_structure>
-    <change_column_types>N</change_column_types>
-    <commit>1000</commit>
-    <connection>EcoHumDev</connection>
-    <drop_columns>N</drop_columns>
-    <fields>
-      <field>
-        <column_name>year</column_name>
-        <stream_name>year</stream_name>
-      </field>
-      <field>
-        <column_name>country_iso3</column_name>
-        <stream_name>country_iso3</stream_name>
-      </field>
-      <field>
-        <column_name>country_name</column_name>
-        <stream_name>country_name</stream_name>
-      </field>
-      <field>
-        <column_name>event</column_name>
-        <stream_name>event</stream_name>
-      </field>
-      <field>
-        <column_name>category</column_name>
-        <stream_name>category</stream_name>
-      </field>
-      <field>
-        <column_name>economic_impact</column_name>
-        <stream_name>economic_impact</stream_name>
-      </field>
-    </fields>
-    <ignore_errors>N</ignore_errors>
-    <only_when_have_rows>N</only_when_have_rows>
-    <partitioning_daily>N</partitioning_daily>
-    <partitioning_enabled>N</partitioning_enabled>
-    <partitioning_monthly>Y</partitioning_monthly>
-    <return_keys>N</return_keys>
-    <schema>EcoHumDev</schema>
-    <specify_fields>Y</specify_fields>
-    <table>Events</table>
-    <tablename_in_field>N</tablename_in_field>
-    <tablename_in_table>Y</tablename_in_table>
-    <truncate>N</truncate>
-    <use_batch>Y</use_batch>
-    <attributes/>
-    <GUI>
-      <xloc>272</xloc>
-      <yloc>304</yloc>
-    </GUI>
-  </transform>
-  <transform>
-    <name>Wdi CSV file input</name>
+    <name>wdi_indicators CSV file input 2</name>
     <type>CSVInput</type>
     <description/>
     <distribute>Y</distribute>
@@ -522,7 +299,239 @@
     <attributes/>
     <GUI>
       <xloc>128</xloc>
-      <yloc>208</yloc>
+      <yloc>224</yloc>
+    </GUI>
+  </transform>
+  <transform>
+    <name>wdi_indicators</name>
+    <type>TableOutput</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <add_columns>N</add_columns>
+    <always_drop_and_recreate>N</always_drop_and_recreate>
+    <auto_update_table_structure>N</auto_update_table_structure>
+    <change_column_types>N</change_column_types>
+    <commit>1000</commit>
+    <connection>DevelopmentStg</connection>
+    <drop_columns>N</drop_columns>
+    <fields>
+      <field>
+        <column_name>country_iso3</column_name>
+        <stream_name>country_iso3</stream_name>
+      </field>
+      <field>
+        <column_name>country_name</column_name>
+        <stream_name>country_name</stream_name>
+      </field>
+      <field>
+        <column_name>indicator_code</column_name>
+        <stream_name>indicator_code</stream_name>
+      </field>
+      <field>
+        <column_name>indicator_name</column_name>
+        <stream_name>indicator_name</stream_name>
+      </field>
+      <field>
+        <column_name>year</column_name>
+        <stream_name>year</stream_name>
+      </field>
+      <field>
+        <column_name>value</column_name>
+        <stream_name>value</stream_name>
+      </field>
+    </fields>
+    <ignore_errors>N</ignore_errors>
+    <only_when_have_rows>N</only_when_have_rows>
+    <partitioning_daily>N</partitioning_daily>
+    <partitioning_enabled>N</partitioning_enabled>
+    <partitioning_field/>
+    <partitioning_monthly>Y</partitioning_monthly>
+    <return_field/>
+    <return_keys>N</return_keys>
+    <schema>DevelopmentStg</schema>
+    <specify_fields>Y</specify_fields>
+    <table>wdi_indicators</table>
+    <tablename_field/>
+    <tablename_in_field>N</tablename_in_field>
+    <tablename_in_table>Y</tablename_in_table>
+    <truncate>N</truncate>
+    <use_batch>Y</use_batch>
+    <attributes/>
+    <GUI>
+      <xloc>336</xloc>
+      <yloc>224</yloc>
+    </GUI>
+  </transform>
+  <transform>
+    <name>historical_events CSV file input 3</name>
+    <type>CSVInput</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <filename>/home/mpupo-co/MEIC/2026_27/AID/aid-project-ist/project_data_sources_2627/historical_events.csv</filename>
+    <filename_field/>
+    <rownum_field/>
+    <include_filename>N</include_filename>
+    <separator>,</separator>
+    <enclosure>"</enclosure>
+    <header>Y</header>
+    <buffer_size>50000</buffer_size>
+    <schemaDefinition/>
+    <ignoreFields>N</ignoreFields>
+    <lazy_conversion>Y</lazy_conversion>
+    <add_filename_result>N</add_filename_result>
+    <parallel>N</parallel>
+    <newline_possible>N</newline_possible>
+    <encoding>UTF-8</encoding>
+    <fields>
+      <field>
+        <name>year</name>
+        <type>Integer</type>
+        <format>#</format>
+        <currency>$</currency>
+        <decimal>.</decimal>
+        <group>,</group>
+        <length>15</length>
+        <precision>0</precision>
+        <trim_type>none</trim_type>
+      </field>
+      <field>
+        <name>country_iso3</name>
+        <type>String</type>
+        <format/>
+        <currency>$</currency>
+        <decimal>.</decimal>
+        <group>,</group>
+        <length>3</length>
+        <precision>-1</precision>
+        <trim_type>none</trim_type>
+      </field>
+      <field>
+        <name>country_name</name>
+        <type>String</type>
+        <format/>
+        <currency>$</currency>
+        <decimal>.</decimal>
+        <group>,</group>
+        <length>8</length>
+        <precision>-1</precision>
+        <trim_type>none</trim_type>
+      </field>
+      <field>
+        <name>event</name>
+        <type>String</type>
+        <format/>
+        <currency>$</currency>
+        <decimal>.</decimal>
+        <group>,</group>
+        <length>101</length>
+        <precision>-1</precision>
+        <trim_type>none</trim_type>
+      </field>
+      <field>
+        <name>category</name>
+        <type>String</type>
+        <format/>
+        <currency>$</currency>
+        <decimal>.</decimal>
+        <group>,</group>
+        <length>20</length>
+        <precision>-1</precision>
+        <trim_type>none</trim_type>
+      </field>
+      <field>
+        <name>economic_impact</name>
+        <type>String</type>
+        <format/>
+        <currency>$</currency>
+        <decimal>.</decimal>
+        <group>,</group>
+        <length>37</length>
+        <precision>-1</precision>
+        <trim_type>none</trim_type>
+      </field>
+    </fields>
+    <attributes/>
+    <GUI>
+      <xloc>128</xloc>
+      <yloc>320</yloc>
+    </GUI>
+  </transform>
+  <transform>
+    <name>historical_events</name>
+    <type>TableOutput</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <add_columns>N</add_columns>
+    <always_drop_and_recreate>N</always_drop_and_recreate>
+    <auto_update_table_structure>N</auto_update_table_structure>
+    <change_column_types>N</change_column_types>
+    <commit>1000</commit>
+    <connection>DevelopmentStg</connection>
+    <drop_columns>N</drop_columns>
+    <fields>
+      <field>
+        <column_name>year</column_name>
+        <stream_name>year</stream_name>
+      </field>
+      <field>
+        <column_name>country_iso3</column_name>
+        <stream_name>country_iso3</stream_name>
+      </field>
+      <field>
+        <column_name>country_name</column_name>
+        <stream_name>country_name</stream_name>
+      </field>
+      <field>
+        <column_name>event</column_name>
+        <stream_name>event</stream_name>
+      </field>
+      <field>
+        <column_name>category</column_name>
+        <stream_name>category</stream_name>
+      </field>
+      <field>
+        <column_name>economic_impact</column_name>
+        <stream_name>economic_impact</stream_name>
+      </field>
+    </fields>
+    <ignore_errors>N</ignore_errors>
+    <only_when_have_rows>N</only_when_have_rows>
+    <partitioning_daily>N</partitioning_daily>
+    <partitioning_enabled>N</partitioning_enabled>
+    <partitioning_field/>
+    <partitioning_monthly>Y</partitioning_monthly>
+    <return_field/>
+    <return_keys>N</return_keys>
+    <schema>DevelopmentStg</schema>
+    <specify_fields>Y</specify_fields>
+    <table>historical_events</table>
+    <tablename_field/>
+    <tablename_in_field>N</tablename_in_field>
+    <tablename_in_table>Y</tablename_in_table>
+    <truncate>N</truncate>
+    <use_batch>Y</use_batch>
+    <attributes/>
+    <GUI>
+      <xloc>336</xloc>
+      <yloc>320</yloc>
     </GUI>
   </transform>
   <transform_error_handling>

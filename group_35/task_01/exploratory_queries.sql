@@ -1,10 +1,10 @@
-USE EcoHumDev;
+USE DevelopmentStg;
 
 select *
-FROM Maddison;
+FROM maddison_indicators;
 
 SELECT *
-FROM Events;
+FROM historical_events;
 
 SELECT *
-FROM Wdi;
+FROM wdi_indicators;
