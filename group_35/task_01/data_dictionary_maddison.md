@@ -83,26 +83,6 @@ The **EU aggregate (`EUU`) does not have Maddison GDP or population observations
 
 The Maddison dataset covers the period **1900–2022**, but the available historical series differ across countries. Therefore, the dataset does not provide a complete 1900–2022 time series for every country.
 
-The country-level coverage identified in the loaded dataset is:
-
-| Country   | ISO3 | First Year | Last Year | Number of Years |
-| --------- | ---- | ---------: | --------: | --------------: |
-| Belgium   | BEL  |       1900 |      2022 |             123 |
-| Czechia   | CZE  |       1970 |      2022 |              53 |
-| Germany   | DEU  |       1900 |      2022 |             123 |
-| Spain     | ESP  |       1900 |      2022 |             123 |
-| Estonia   | EST  |       1973 |      2022 |              44 |
-| France    | FRA  |       1900 |      2022 |             123 |
-| Greece    | GRC  |       1900 |      2022 |             123 |
-| Hungary   | HUN  |       1900 |      2022 |             100 |
-| Ireland   | IRL  |       1913 |      2022 |             103 |
-| Italy     | ITA  |       1900 |      2022 |             123 |
-| Lithuania | LTU  |       1973 |      2022 |              44 |
-| Latvia    | LVA  |       1973 |      2022 |              44 |
-| Poland    | POL  |       1900 |      2022 |              89 |
-| Portugal  | PRT  |       1900 |      2022 |             123 |
-| Romania   | ROU  |       1900 |      2022 |             123 |
-
 ### Coverage patterns
 
 The historical coverage can be divided into several groups:
@@ -145,6 +125,4 @@ The natural grain of the source data is:
 
 Therefore, observations should be unique at this combination of attributes.
 
-The `maddison_id` primary key uniquely identifies rows in the staging table, but it does **not** represent the analytical grain of the source data.
-
-The dataset is valid since it does not contain multiple observations for the same  `country × indicator × year`
+The dataset is valid since it does not contain multiple observations for the same  `country × indicator × year`.
