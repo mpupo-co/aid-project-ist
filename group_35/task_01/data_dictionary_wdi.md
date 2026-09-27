@@ -1,91 +1,134 @@
 # World Development Indicators — Data Dictionary
 
-## Dataset Overview
+## 1. Source overview
 
-| Property                   | Description                                                                                 |
-| -------------------------- | ------------------------------------------------------------------------------------------- |
-| **Dataset**                | World Bank World Development Indicators                                                     |
-| **File**                   | `wdi_indicators.csv`                                                                        |
-| **Purpose**                | Provides contemporary economic, structural, demographic, and social-development indicators. |
-| **Rows**                   | 11 371                                                                                      |
-| **Entities**               | 16                                                                                          |
-| **Indicators**             | 17                                                                                          |
-| **Overall year span**      | 1960–2025                                                                                   |
-| **Geographic scope**       | 15 European countries + European Union (`EUU`)                                              |
-| **Grain**                  | Country × indicator × year                                                                  |
-| **Missing values**         | None                                                                                        |
-| **Duplicate observations** | None at  country × indicator × year grain                                                   |
+| Item                | Description                                                                         |
+| ------------------- | ----------------------------------------------------------------------------------- |
+| Source table        | `wdi_indicators`                                                                    |
+| Total rows          | **11 371**                                                                          |
+| Distinct entities   | **16**                                                                              |
+| Distinct indicators | **17**                                                                              |
+| Overall year span   | **1960–2025**                                                                       |
+| Geographic coverage | 15 European countries + European Union (`EUU`)                                      |
+| Unit of observation | Entity–indicator–year                                                               |
+| Missing values      | No missing values detected in the loaded observations                               |
+| Missing key fields  | No missing entity codes, names, indicator codes, indicator names, or years detected |
 
-## Column Dictionary
+## 2. Columns
 
-| Column           | Type          | Description                                                | Unit / Values       |
-| ---------------- | ------------- | ---------------------------------------------------------- | ------------------- |
-| `wdi_id`         | `INT`         | Surrogate identifier automatically generated for each staging record. It is the primary key of the staging table and was created for database management purposes. | Ordinal Number |
-| `country_iso3`   | `VARCHAR(3)`  | ISO 3166-1 alpha-3 identifier of the country or aggregate. | ISO3 code           |
-| `country_name`   | `VARCHAR(15)` | Country/entity name corresponding to `country_iso3`.       | Text                |
-| `indicator_code` | `VARCHAR(20)` | World Bank identifier for the WDI indicator.               | WDI code            |
-| `indicator_name` | `TEXT`        | Human-readable WDI indicator name.                         | Text                |
-| `year`           | `INT`         | Observation year.                                          | Calendar year       |
-| `value`          | `DECIMAL`     | Numerical value of the indicator for the entity and year.  | Indicator-dependent |
+| Column           | Type        | Description                                |
+| ---------------- | ----------- | ------------------------------------------ |
+| `wdi_id`         | INT         | Unique identifier for each event record - Surrogate identifier automatically generated |
+| `iso3`           | VARCHAR(3)  | ISO3/entity code                           |
+| `name`           | VARCHAR(15) | Country or entity name                     |
+| `indicator_code` | VARCHAR(20) | World Bank/WDI indicator code              |
+| `indicator_name` | TEXT        | Indicator description                      |
+| `year`           | INT         | Observation year                           |
+| `value`          | DECIMAL     | Numerical value of the indicator           |
 
-## Indicators and Units
+## 3. Indicators and units
 
-| Indicator Code      | Indicator                                      | Unit                   |
-| ------------------- | ---------------------------------------------- | ---------------------- |
-| `NE.EXP.GNFS.ZS`    | Exports of goods and services                  | % of GDP               |
-| `NE.IMP.GNFS.ZS`    | Imports of goods and services                  | % of GDP               |
-| `NV.AGR.TOTL.CD`    | Agriculture, forestry and fishing, value added | Current US$            |
-| `NV.AGR.TOTL.ZS`    | Agriculture, forestry and fishing, value added | % of GDP               |
-| `NV.IND.MANF.CD`    | Manufacturing, value added                     | Current US$            |
-| `NV.IND.MANF.ZS`    | Manufacturing, value added                     | % of GDP               |
-| `NV.IND.TOTL.CD`    | Industry, including construction, value added  | Current US$            |
-| `NV.IND.TOTL.ZS`    | Industry, including construction, value added  | % of GDP               |
-| `NV.SRV.TOTL.CD`    | Services, value added                          | Current US$            |
-| `NV.SRV.TOTL.ZS`    | Services, value added                          | % of GDP               |
-| `NY.GDP.MKTP.KD.ZG` | GDP growth                                     | Annual %               |
-| `NY.GNP.PCAP.CD`    | GNI per capita, Atlas method                   | Current US$ per capita |
-| `SL.AGR.EMPL.ZS`    | Employment in agriculture                      | % of total employment  |
-| `SL.IND.EMPL.ZS`    | Employment in industry                         | % of total employment  |
-| `SL.SRV.EMPL.ZS`    | Employment in services                         | % of total employment  |
-| `SP.DYN.LE00.IN`    | Life expectancy at birth                       | Years                  |
-| `SP.URB.TOTL.IN.ZS` | Urban population                               | % of total population  |
+| Indicator           | Unit                                                       |
+| ------------------- | ---------------------------------------------------------- |
+| `NE.EXP.GNFS.ZS`    | Exports of goods and services, % of GDP                    |
+| `NE.IMP.GNFS.ZS`    | Imports of goods and services, % of GDP                    |
+| `NV.AGR.TOTL.CD`    | Agriculture, forestry and fishing value added, current US$ |
+| `NV.AGR.TOTL.ZS`    | Agriculture, forestry and fishing value added, % of GDP    |
+| `NV.IND.MANF.CD`    | Manufacturing value added, current US$                     |
+| `NV.IND.MANF.ZS`    | Manufacturing value added, % of GDP                        |
+| `NV.IND.TOTL.CD`    | Industry including construction value added, current US$   |
+| `NV.IND.TOTL.ZS`    | Industry including construction value added, % of GDP      |
+| `NV.SRV.TOTL.CD`    | Services value added, current US$                          |
+| `NV.SRV.TOTL.ZS`    | Services value added, % of GDP                             |
+| `NY.GDP.MKTP.KD.ZG` | GDP growth, annual %                                       |
+| `NY.GNP.PCAP.CD`    | GNI per capita, Atlas method, current US$                  |
+| `SL.AGR.EMPL.ZS`    | Employment in agriculture, % of total employment           |
+| `SL.IND.EMPL.ZS`    | Employment in industry, % of total employment              |
+| `SL.SRV.EMPL.ZS`    | Employment in services, % of total employment              |
+| `SP.DYN.LE00.IN`    | Life expectancy at birth, years                            |
+| `SP.URB.TOTL.IN.ZS` | Urban population, % of total population                    |
 
-Employment indicators are based on **modeled ILO estimates**, as specified in the indicator definitions.
+## 4. Geographic coverage
 
-## Indicator-Level Temporal Coverage
+The dataset contains **16 entities**:
 
-| Indicator group      | First Year | Last Year | Main coverage characteristic                                                      |
-| -------------------- | ---------: | --------: | --------------------------------------------------------------------------------- |
-| Exports / Imports    |       1960 |      2025 | Longest economic coverage, but country-specific starts vary                       |
-| Sectoral value added |       1960 |      2025 | Large country differences in starting years                                       |
-| GDP growth           |       1961 |      2025 | Earlier coverage for Western Europe; later for several Eastern European countries |
-| GNI per capita       |       1962 |      2025 | Later starts for several Central/Eastern European countries                       |
-| Employment by sector |       1991 |      2025 | Consistently shorter historical coverage                                          |
-| Life expectancy      |       1960 |      2024 | Latest year is 2024 rather than 2025                                              |
-| Urban population     |       1960 |      2025 | Broadest and most consistent coverage                                             |
+Belgium, Czechia, Germany, Spain, Estonia, European Union, France, Greece, Hungary, Ireland, Italy, Lithuania, Latvia, Poland, Portugal, and Romania.
 
-The indicator-level first and last years represent the **overall range across the 16 entities**, not necessarily the coverage of every country.
+All **17 indicators cover all 16 entities** at least once.
 
-## Geographic Coverage and Gaps
+The `EUU` entity represents the European Union and should be distinguished from the 15 individual countries.
 
-Country-level coverage varies considerably by indicator.
+## 5. Overall temporal coverage
 
-Relevant patterns include:
+The WDI dataset covers **1960–2025**, with 66 distinct years overall.
 
-* **Life expectancy**: 1960–2024 for all 16 entities.
-* **Urban population**: 1960–2025 for all 16 entities.
-* **Employment indicators**: 1991–2025 for all 16 entities.
-* **Exports/imports** range from 1960 for France and Greece to 1995 for Lithuania, Latvia and Poland.
-* **Sectoral value added** generally begins in the 1990s for many countries, although France has coverage from 1960.
-* **GDP growth** starts in 1961 for several Western European countries, while several Central/Eastern European and Baltic entities begin in 1991.
-* **GNI per capita** starts in 1962 for several Western European countries but later for some Eastern European and Baltic countries.
-* Romania has a specific sectoral gap: agriculture, industry and services begin in 1990, while manufacturing begins in 1991.
-* For the European Union (`EUU`), agriculture value added starts in 1995, while manufacturing, total industry and services start in 1991.
+However, temporal coverage differs by indicator:
 
-## Relevant Particularities
+| Indicator group           | First year | Last year | Distinct years |  Rows |
+| ------------------------- | ---------: | --------: | -------------: | ----: |
+| Exports                   |       1960 |      2025 |             66 |   757 |
+| Imports                   |       1960 |      2025 |             66 |   757 |
+| Agriculture value added   |       1960 |      2025 |             66 |   547 |
+| Manufacturing value added |       1960 |      2025 |             66 |   550 |
+| Industry value added      |       1960 |      2025 |             66 |   551 |
+| Services value added      |       1960 |      2025 |             66 |   551 |
+| GDP growth                |       1961 |      2025 |             65 |   860 |
+| GNI per capita            |       1962 |      2025 |             64 |   823 |
+| Agriculture employment    |       1991 |      2025 |             35 |   560 |
+| Industry employment       |       1991 |      2025 |             35 |   560 |
+| Services employment       |       1991 |      2025 |             35 |   560 |
+| Life expectancy           |       1960 |      2024 |             65 | 1 040 |
+| Urban population          |       1960 |      2025 |             66 | 1 056 |
 
-* The dataset is in **long format**.
-* The analytical grain is `country_iso3 + indicator_code + year`.
-* There are **17 indicators with different temporal coverage**.
-* The dataset is therefore **not a complete 16 × 17 × 66 panel**.
-* `EUU` is an aggregate entity and should be distinguished analytically from individual countries.
+The value-added indicators have the same nominal 1960–2025 span but contain substantially fewer observations than a complete 16-country × 66-year series. This indicates gaps in country-year coverage.
+
+The three employment indicators have a much shorter common span, **1991–2025**.
+
+Life expectancy ends in **2024**, one year earlier than other indicators.
+
+## 6. Country-level coverage
+
+All 16 entities have observations spanning **1960–2025**, but the number of observations differs:
+
+| Entity         | Year span |  Rows |
+| -------------- | --------: | ----: |
+| Belgium        | 1960–2025 |   725 |
+| Czechia        | 1960–2025 |   641 |
+| Germany        | 1960–2025 |   757 |
+| Spain          | 1960–2025 |   725 |
+| Estonia        | 1960–2025 |   616 |
+| European Union | 1960–2025 |   749 |
+| France         | 1960–2025 | 1 025 |
+| Greece         | 1960–2025 |   745 |
+| Hungary        | 1960–2025 |   675 |
+| Ireland        | 1960–2025 |   725 |
+| Italy          | 1960–2025 |   765 |
+| Lithuania      | 1960–2025 |   610 |
+| Latvia         | 1960–2025 |   610 |
+| Poland         | 1960–2025 |   615 |
+| Portugal       | 1960–2025 |   725 |
+| Romania        | 1960–2025 |   663 |
+
+The common year range therefore should **not** be interpreted as complete coverage for every indicator and country.
+
+## 7. Data quality and coverage gaps
+
+No missing values were detected in the loaded `value` field, and no missing entity codes, names, indicator codes, indicator names, or years were detected.
+
+However, the row counts reveal **coverage gaps** within several indicator series.
+
+For example:
+
+* exports/imports: 757 observations each versus 1 056 possible observations for a complete 16 × 66 series(entities/ coutries x nº of years);
+* agriculture value added: 547 observations;
+* manufacturing value added: 550 observations;
+* GDP growth: 860 observations over 65 years;
+* GNI per capita: 823 observations over 64 years.
+
+The three employment indicators contain **560 observations each**, corresponding to complete 16 × 35 coverage over 1991–2025.
+
+Life expectancy contains **1 040 observations**, corresponding to complete 16 × 65 coverage over 1960–2024.
+
+Urban population contains **1,056 observations**, corresponding to complete 16 × 66 coverage over 1960–2025.
+
+The dataset contains **120 negative GDP-growth observations**. These are valid values because negative annual GDP growth is economically possible and represents contraction.

@@ -1,373 +1,60 @@
-# Report
+# TASK 1 - Staging Database and Profile Data
 
-## 1. Task 1
+## 1. Overview
 
-### 1.1. Maddison Project Database 2023
+Exploratory SQL profiling was performed on the three source datasets used for the data warehouse: the Historical Events dataset, the World Development Indicators (WDI), and the Maddison Project Database. The profiling focused on row counts, geographic coverage, temporal coverage, indicator availability, missing values, and potential data-integrity issues.
 
-**Country-Level Temporal Coverage**
+The results show that the three sources have complementary temporal and geographic characteristics. The Maddison dataset provides long-run historical economic indicators from 1900 to 2022, the WDI dataset provides more recent and broader socioeconomic indicators from 1960 to 2025, and the Historical Events dataset provides selected historical events associated with the countries and periods covered by the project.
 
-| Country | First Year | Last Year | Number of Years |
-| ------- | ---------: | --------: | --------------: |
-| BEL     |       1900 |      2022 |             123 |
-| CZE     |       1970 |      2022 |              53 |
-| DEU     |       1900 |      2022 |             123 |
-| ESP     |       1900 |      2022 |             123 |
-| EST     |       1973 |      2022 |              44 |
-| FRA     |       1900 |      2022 |             123 |
-| GRC     |       1900 |      2022 |             123 |
-| HUN     |       1900 |      2022 |             100 |
-| IRL     |       1913 |      2022 |             103 |
-| ITA     |       1900 |      2022 |             123 |
-| LTU     |       1973 |      2022 |              44 |
-| LVA     |       1973 |      2022 |              44 |
-| POL     |       1900 |      2022 |              89 |
-| PRT     |       1900 |      2022 |             123 |
-| ROU     |       1900 |      2022 |             123 |
+## 2. Historical Events
 
+The Historical Events dataset contains **387 records covering 16 entities and 110 distinct years between 1900 and 2025**. The geographic coverage comprises 15 European countries and the European Union.
 
-The Maddison dataset provides an overall coverage from **1900 to 2022**.
+The number of events varies considerably between entities. Portugal has **125 event records**, substantially more than the other entities, while the remaining entities contain between 5 and 22 records.
 
-However, historical coverage is not uniform across countries:
+Temporal coverage is also uneven. Most entities have events between 1900 and 2020, while Portugal contains events through 2025. The European Union has a narrower range, from 1957 to 2007. Portugal has 125 events distributed across 88 distinct years, demonstrating that multiple events may occur in the same year.
 
-* Belgium, Germany, Spain, France, Greece, Italy, Portugal and Romania have observations covering the full 1900–2022 period.
-* Ireland starts in 1913.
-* Czechia starts in 1970.
-* Estonia, Latvia and Lithuania start in 1973.
-* Hungary and Poland start in 1900 but contain internal gaps, resulting in fewer than 123 observed years.
+No missing ISO3 codes, entity names, years, or event descriptions were detected. The principal limitation is therefore not missing data fields but the selective nature of event coverage. 
 
----
+## 3. World Development Indicators
 
-### 1.2. World Development Indicators
+The WDI dataset contains **11 371 observations, 16 entities, and 17 indicators**. The geographic coverage includes the same 15 European countries as the Maddison dataset plus the European Union.
 
-**Indicator Coverage**
+The overall WDI temporal span is **1960–2025**, but individual indicators have different periods of availability. Exports and imports cover 1960–2025, while GDP growth begins in 1961 and GNI per capita in 1962. The three employment indicators begin considerably later, in 1991. Life expectancy covers 1960–2024, while urban population covers 1960–2025.
 
-| Indicator Code    | Indicator                                | First Year | Last Year | Countries | Years | Observations |
-| ----------------- | ---------------------------------------- | ---------: | --------: | --------: | ----: | -----------: |
-| NE.EXP.GNFS.ZS    | Exports of goods and services (% of GDP) |       1960 |      2025 |        16 |    66 |          757 |
-| NE.IMP.GNFS.ZS    | Imports of goods and services (% of GDP) |       1960 |      2025 |        16 |    66 |          757 |
-| NV.AGR.TOTL.CD    | Agriculture value added (current US$)    |       1960 |      2025 |        16 |    66 |          547 |
-| NV.AGR.TOTL.ZS    | Agriculture value added (% of GDP)       |       1960 |      2025 |        16 |    66 |          547 |
-| NV.IND.MANF.CD    | Manufacturing value added (current US$)  |       1960 |      2025 |        16 |    66 |          550 |
-| NV.IND.MANF.ZS    | Manufacturing value added (% of GDP)     |       1960 |      2025 |        16 |    66 |          550 |
-| NV.IND.TOTL.CD    | Industry value added (current US$)       |       1960 |      2025 |        16 |    66 |          551 |
-| NV.IND.TOTL.ZS    | Industry value added (% of GDP)          |       1960 |      2025 |        16 |    66 |          551 |
-| NV.SRV.TOTL.CD    | Services value added (current US$)       |       1960 |      2025 |        16 |    66 |          551 |
-| NV.SRV.TOTL.ZS    | Services value added (% of GDP)          |       1960 |      2025 |        16 |    66 |          551 |
-| NY.GDP.MKTP.KD.ZG | GDP growth (annual %)                    |       1961 |      2025 |        16 |    65 |          860 |
-| NY.GNP.PCAP.CD    | GNI per capita                           |       1962 |      2025 |        16 |    64 |          823 |
-| SL.AGR.EMPL.ZS    | Employment in agriculture                |       1991 |      2025 |        16 |    35 |          560 |
-| SL.IND.EMPL.ZS    | Employment in industry                   |       1991 |      2025 |        16 |    35 |          560 |
-| SL.SRV.EMPL.ZS    | Employment in services                   |       1991 |      2025 |        16 |    35 |          560 |
-| SP.DYN.LE00.IN    | Life expectancy at birth                 |       1960 |      2024 |        16 |    65 |        1,040 |
-| SP.URB.TOTL.IN.ZS | Urban population                         |       1960 |      2025 |        16 |    66 |        1,056 |
+The indicator-level row counts demonstrate that the nominal year range does not imply complete coverage. For example, exports and imports contain 757 observations each, compared with 1,056 observations that would result from a complete 16-entity × 66-year panel. Agriculture value added contains 547 observations, while GDP growth contains 860 observations over 65 years.
 
-The indicator-level profiling shows that the WDI dataset contains 17 indicators across all 16 geographical entities. The overall temporal range is 1960–2025, but the historical depth differs substantially between indicator groups.
+In contrast, the employment indicators each contain 560 observations, corresponding to complete coverage across the 16 entities for 1991–2025. Life expectancy contains 1 040 observations, corresponding to complete 1960–2024 coverage, and urban population contains 1 056 observations, corresponding to complete 1960–2025 coverage.
 
-The indicators with the longest coverage are exports, imports, sectoral value added, life expectancy and urban population, all of which reach back to 1960 at the dataset level. However, this does not mean that every country has observations from 1960 for these indicators.
+No missing values were found in the loaded `value` field or in the main identifying fields. The profiling also identified 120 negative GDP-growth observations. These were treated as valid observations because negative annual GDP growth represents economic contraction and is not inherently a data-integrity problem.
 
-Other indicators begin later:
+## 4. Maddison Project Database
 
-* GDP growth starts in 1961.
-* GNI per capita starts in 1962.
-* Employment by sector starts in 1991.
-* Life expectancy ends in 2024, while the other indicators generally extend to 2025.
+The Maddison dataset contains **4 349 observations covering 15 countries and three indicators: GDP, GDP per capita, and population**. Its temporal span is **1900–2022**, providing the longest historical coverage of the three sources.
 
-The number of observations also varies considerably. For example, urban population has 1,056 observations, corresponding to the theoretical maximum of 16 entities × 66 years, while agriculture value added has 547 observations. 
+All three indicators have an overall span of 1900–2022. However, coverage differs substantially by country. Belgium, Germany, Spain, France, Greece, Italy, and Portugal have 123 distinct years, while Czechia begins in 1970 and Estonia, Lithuania, and Latvia begin in 1973. Ireland begins in 1913, Hungary contains 100 distinct years, and Poland contains 89 distinct years.
 
-**Country × Indicator Temporal Coverage**
+Romania has a nominal 1900–2022 span but contains 335 observations rather than the 369 observations expected from complete coverage of three indicators across 123 years.
 
-| Country ISO3 | Country        | Indicator Code    | Indicator                                                                | First Year | Last Year | Number of Years |
-| ------------ | -------------- | ----------------- | ------------------------------------------------------------------------ | ---------: | --------: | --------------: |
-| BEL          | Belgium        | NE.EXP.GNFS.ZS    | Exports of goods and services (% of GDP)                                 |       1970 |      2025 |              56 |
-| BEL          | Belgium        | NE.IMP.GNFS.ZS    | Imports of goods and services (% of GDP)                                 |       1970 |      2025 |              56 |
-| BEL          | Belgium        | NV.AGR.TOTL.CD    | Agriculture, forestry, and fishing, value added (current US$)            |       1995 |      2025 |              31 |
-| BEL          | Belgium        | NV.AGR.TOTL.ZS    | Agriculture, forestry, and fishing, value added (% of GDP)               |       1995 |      2025 |              31 |
-| BEL          | Belgium        | NV.IND.MANF.CD    | Manufacturing, value added (current US$)                                 |       1995 |      2025 |              31 |
-| BEL          | Belgium        | NV.IND.MANF.ZS    | Manufacturing, value added (% of GDP)                                    |       1995 |      2025 |              31 |
-| BEL          | Belgium        | NV.IND.TOTL.CD    | Industry (including construction), value added (current US$)             |       1995 |      2025 |              31 |
-| BEL          | Belgium        | NV.IND.TOTL.ZS    | Industry (including construction), value added (% of GDP)                |       1995 |      2025 |              31 |
-| BEL          | Belgium        | NV.SRV.TOTL.CD    | Services, value added (current US$)                                      |       1995 |      2025 |              31 |
-| BEL          | Belgium        | NV.SRV.TOTL.ZS    | Services, value added (% of GDP)                                         |       1995 |      2025 |              31 |
-| BEL          | Belgium        | NY.GDP.MKTP.KD.ZG | GDP growth (annual %)                                                    |       1961 |      2025 |              65 |
-| BEL          | Belgium        | NY.GNP.PCAP.CD    | GNI per capita, Atlas method (current US$)                               |       1962 |      2025 |              64 |
-| BEL          | Belgium        | SL.AGR.EMPL.ZS    | Employment in agriculture (% of total employment) (modeled ILO estimate) |       1991 |      2025 |              35 |
-| BEL          | Belgium        | SL.IND.EMPL.ZS    | Employment in industry (% of total employment) (modeled ILO estimate)    |       1991 |      2025 |              35 |
-| BEL          | Belgium        | SL.SRV.EMPL.ZS    | Employment in services (% of total employment) (modeled ILO estimate)    |       1991 |      2025 |              35 |
-| BEL          | Belgium        | SP.DYN.LE00.IN    | Life expectancy at birth, total (years)                                  |       1960 |      2024 |              65 |
-| BEL          | Belgium        | SP.URB.TOTL.IN.ZS | Urban population (% of total population)                                 |       1960 |      2025 |              66 |
-| CZE          | Czechia        | NE.EXP.GNFS.ZS    | Exports of goods and services (% of GDP)                                 |       1990 |      2025 |              36 |
-| CZE          | Czechia        | NE.IMP.GNFS.ZS    | Imports of goods and services (% of GDP)                                 |       1990 |      2025 |              36 |
-| CZE          | Czechia        | NV.AGR.TOTL.CD    | Agriculture, forestry, and fishing, value added (current US$)            |       1993 |      2025 |              33 |
-| CZE          | Czechia        | NV.AGR.TOTL.ZS    | Agriculture, forestry, and fishing, value added (% of GDP)               |       1993 |      2025 |              33 |
-| CZE          | Czechia        | NV.IND.MANF.CD    | Manufacturing, value added (current US$)                                 |       1993 |      2025 |              33 |
-| CZE          | Czechia        | NV.IND.MANF.ZS    | Manufacturing, value added (% of GDP)                                    |       1993 |      2025 |              33 |
-| CZE          | Czechia        | NV.IND.TOTL.CD    | Industry (including construction), value added (current US$)             |       1993 |      2025 |              33 |
-| CZE          | Czechia        | NV.IND.TOTL.ZS    | Industry (including construction), value added (% of GDP)                |       1993 |      2025 |              33 |
-| CZE          | Czechia        | NV.SRV.TOTL.CD    | Services, value added (current US$)                                      |       1993 |      2025 |              33 |
-| CZE          | Czechia        | NV.SRV.TOTL.ZS    | Services, value added (% of GDP)                                         |       1993 |      2025 |              33 |
-| CZE          | Czechia        | NY.GDP.MKTP.KD.ZG | GDP growth (annual %)                                                    |       1991 |      2025 |              35 |
-| CZE          | Czechia        | NY.GNP.PCAP.CD    | GNI per capita, Atlas method (current US$)                               |       1992 |      2025 |              34 |
-| CZE          | Czechia        | SL.AGR.EMPL.ZS    | Employment in agriculture (% of total employment) (modeled ILO estimate) |       1991 |      2025 |              35 |
-| CZE          | Czechia        | SL.IND.EMPL.ZS    | Employment in industry (% of total employment) (modeled ILO estimate)    |       1991 |      2025 |              35 |
-| CZE          | Czechia        | SL.SRV.EMPL.ZS    | Employment in services (% of total employment) (modeled ILO estimate)    |       1991 |      2025 |              35 |
-| CZE          | Czechia        | SP.DYN.LE00.IN    | Life expectancy at birth, total (years)                                  |       1960 |      2024 |              65 |
-| CZE          | Czechia        | SP.URB.TOTL.IN.ZS | Urban population (% of total population)                                 |       1960 |      2025 |              66 |
-| DEU          | Germany        | NE.EXP.GNFS.ZS    | Exports of goods and services (% of GDP)                                 |       1970 |      2025 |              56 |
-| DEU          | Germany        | NE.IMP.GNFS.ZS    | Imports of goods and services (% of GDP)                                 |       1970 |      2025 |              56 |
-| DEU          | Germany        | NV.AGR.TOTL.CD    | Agriculture, forestry, and fishing, value added (current US$)            |       1991 |      2025 |              35 |
-| DEU          | Germany        | NV.AGR.TOTL.ZS    | Agriculture, forestry, and fishing, value added (% of GDP)               |       1991 |      2025 |              35 |
-| DEU          | Germany        | NV.IND.MANF.CD    | Manufacturing, value added (current US$)                                 |       1991 |      2025 |              35 |
-| DEU          | Germany        | NV.IND.MANF.ZS    | Manufacturing, value added (% of GDP)                                    |       1991 |      2025 |              35 |
-| DEU          | Germany        | NV.IND.TOTL.CD    | Industry (including construction), value added (current US$)             |       1991 |      2025 |              35 |
-| DEU          | Germany        | NV.IND.TOTL.ZS    | Industry (including construction), value added (% of GDP)                |       1991 |      2025 |              35 |
-| DEU          | Germany        | NV.SRV.TOTL.CD    | Services, value added (current US$)                                      |       1991 |      2025 |              35 |
-| DEU          | Germany        | NV.SRV.TOTL.ZS    | Services, value added (% of GDP)                                         |       1991 |      2025 |              35 |
-| DEU          | Germany        | NY.GDP.MKTP.KD.ZG | GDP growth (annual %)                                                    |       1961 |      2025 |              65 |
-| DEU          | Germany        | NY.GNP.PCAP.CD    | GNI per capita, Atlas method (current US$)                               |       1962 |      2025 |              64 |
-| DEU          | Germany        | SL.AGR.EMPL.ZS    | Employment in agriculture (% of total employment) (modeled ILO estimate) |       1991 |      2025 |              35 |
-| DEU          | Germany        | SL.IND.EMPL.ZS    | Employment in industry (% of total employment) (modeled ILO estimate)    |       1991 |      2025 |              35 |
-| DEU          | Germany        | SL.SRV.EMPL.ZS    | Employment in services (% of total employment) (modeled ILO estimate)    |       1991 |      2025 |              35 |
-| DEU          | Germany        | SP.DYN.LE00.IN    | Life expectancy at birth, total (years)                                  |       1960 |      2024 |              65 |
-| DEU          | Germany        | SP.URB.TOTL.IN.ZS | Urban population (% of total population)                                 |       1960 |      2025 |              66 |
-| ESP          | Spain          | NE.EXP.GNFS.ZS    | Exports of goods and services (% of GDP)                                 |       1970 |      2025 |              56 |
-| ESP          | Spain          | NE.IMP.GNFS.ZS    | Imports of goods and services (% of GDP)                                 |       1970 |      2025 |              56 |
-| ESP          | Spain          | NV.AGR.TOTL.CD    | Agriculture, forestry, and fishing, value added (current US$)            |       1995 |      2025 |              31 |
-| ESP          | Spain          | NV.AGR.TOTL.ZS    | Agriculture, forestry, and fishing, value added (% of GDP)               |       1995 |      2025 |              31 |
-| ESP          | Spain          | NV.IND.MANF.CD    | Manufacturing, value added (current US$)                                 |       1995 |      2025 |              31 |
-| ESP          | Spain          | NV.IND.MANF.ZS    | Manufacturing, value added (% of GDP)                                    |       1995 |      2025 |              31 |
-| ESP          | Spain          | NV.IND.TOTL.CD    | Industry (including construction), value added (current US$)             |       1995 |      2025 |              31 |
-| ESP          | Spain          | NV.IND.TOTL.ZS    | Industry (including construction), value added (% of GDP)                |       1995 |      2025 |              31 |
-| ESP          | Spain          | NV.SRV.TOTL.CD    | Services, value added (current US$)                                      |       1995 |      2025 |              31 |
-| ESP          | Spain          | NV.SRV.TOTL.ZS    | Services, value added (% of GDP)                                         |       1995 |      2025 |              31 |
-| ESP          | Spain          | NY.GDP.MKTP.KD.ZG | GDP growth (annual %)                                                    |       1961 |      2025 |              65 |
-| ESP          | Spain          | NY.GNP.PCAP.CD    | GNI per capita, Atlas method (current US$)                               |       1962 |      2025 |              64 |
-| ESP          | Spain          | SL.AGR.EMPL.ZS    | Employment in agriculture (% of total employment) (modeled ILO estimate) |       1991 |      2025 |              35 |
-| ESP          | Spain          | SL.IND.EMPL.ZS    | Employment in industry (% of total employment) (modeled ILO estimate)    |       1991 |      2025 |              35 |
-| ESP          | Spain          | SL.SRV.EMPL.ZS    | Employment in services (% of total employment) (modeled ILO estimate)    |       1991 |      2025 |              35 |
-| ESP          | Spain          | SP.DYN.LE00.IN    | Life expectancy at birth, total (years)                                  |       1960 |      2024 |              65 |
-| ESP          | Spain          | SP.URB.TOTL.IN.ZS | Urban population (% of total population)                                 |       1960 |      2025 |              66 |
-| EST          | Estonia        | NE.EXP.GNFS.ZS    | Exports of goods and services (% of GDP)                                 |       1993 |      2025 |              33 |
-| EST          | Estonia        | NE.IMP.GNFS.ZS    | Imports of goods and services (% of GDP)                                 |       1993 |      2025 |              33 |
-| EST          | Estonia        | NV.AGR.TOTL.CD    | Agriculture, forestry, and fishing, value added (current US$)            |       1995 |      2025 |              31 |
-| EST          | Estonia        | NV.AGR.TOTL.ZS    | Agriculture, forestry, and fishing, value added (% of GDP)               |       1995 |      2025 |              31 |
-| EST          | Estonia        | NV.IND.MANF.CD    | Manufacturing, value added (current US$)                                 |       1995 |      2025 |              31 |
-| EST          | Estonia        | NV.IND.MANF.ZS    | Manufacturing, value added (% of GDP)                                    |       1995 |      2025 |              31 |
-| EST          | Estonia        | NV.IND.TOTL.CD    | Industry (including construction), value added (current US$)             |       1995 |      2025 |              31 |
-| EST          | Estonia        | NV.IND.TOTL.ZS    | Industry (including construction), value added (% of GDP)                |       1995 |      2025 |              31 |
-| EST          | Estonia        | NV.SRV.TOTL.CD    | Services, value added (current US$)                                      |       1995 |      2025 |              31 |
-| EST          | Estonia        | NV.SRV.TOTL.ZS    | Services, value added (% of GDP)                                         |       1995 |      2025 |              31 |
-| EST          | Estonia        | NY.GDP.MKTP.KD.ZG | GDP growth (annual %)                                                    |       1991 |      2025 |              35 |
-| EST          | Estonia        | NY.GNP.PCAP.CD    | GNI per capita, Atlas method (current US$)                               |       1995 |      2025 |              31 |
-| EST          | Estonia        | SL.AGR.EMPL.ZS    | Employment in agriculture (% of total employment) (modeled ILO estimate) |       1991 |      2025 |              35 |
-| EST          | Estonia        | SL.IND.EMPL.ZS    | Employment in industry (% of total employment) (modeled ILO estimate)    |       1991 |      2025 |              35 |
-| EST          | Estonia        | SL.SRV.EMPL.ZS    | Employment in services (% of total employment) (modeled ILO estimate)    |       1991 |      2025 |              35 |
-| EST          | Estonia        | SP.DYN.LE00.IN    | Life expectancy at birth, total (years)                                  |       1960 |      2024 |              65 |
-| EST          | Estonia        | SP.URB.TOTL.IN.ZS | Urban population (% of total population)                                 |       1960 |      2025 |              66 |
-| EUU          | European Union | NE.EXP.GNFS.ZS    | Exports of goods and services (% of GDP)                                 |       1970 |      2025 |              56 |
-| EUU          | European Union | NE.IMP.GNFS.ZS    | Imports of goods and services (% of GDP)                                 |       1970 |      2025 |              56 |
-| EUU          | European Union | NV.AGR.TOTL.CD    | Agriculture, forestry, and fishing, value added (current US$)            |       1995 |      2025 |              31 |
-| EUU          | European Union | NV.AGR.TOTL.ZS    | Agriculture, forestry, and fishing, value added (% of GDP)               |       1995 |      2025 |              31 |
-| EUU          | European Union | NV.IND.MANF.CD    | Manufacturing, value added (current US$)                                 |       1991 |      2025 |              35 |
-| EUU          | European Union | NV.IND.MANF.ZS    | Manufacturing, value added (% of GDP)                                    |       1991 |      2025 |              35 |
-| EUU          | European Union | NV.IND.TOTL.CD    | Industry (including construction), value added (current US$)             |       1991 |      2025 |              35 |
-| EUU          | European Union | NV.IND.TOTL.ZS    | Industry (including construction), value added (% of GDP)                |       1991 |      2025 |              35 |
-| EUU          | European Union | NV.SRV.TOTL.CD    | Services, value added (current US$)                                      |       1991 |      2025 |              35 |
-| EUU          | European Union | NV.SRV.TOTL.ZS    | Services, value added (% of GDP)                                         |       1991 |      2025 |              35 |
-| EUU          | European Union | NY.GDP.MKTP.KD.ZG | GDP growth (annual %)                                                    |       1961 |      2025 |              65 |
-| EUU          | European Union | NY.GNP.PCAP.CD    | GNI per capita, Atlas method (current US$)                               |       1962 |      2025 |              64 |
-| EUU          | European Union | SL.AGR.EMPL.ZS    | Employment in agriculture (% of total employment) (modeled ILO estimate) |       1991 |      2025 |              35 |
-| EUU          | European Union | SL.IND.EMPL.ZS    | Employment in industry (% of total employment) (modeled ILO estimate)    |       1991 |      2025 |              35 |
-| EUU          | European Union | SL.SRV.EMPL.ZS    | Employment in services (% of total employment) (modeled ILO estimate)    |       1991 |      2025 |              35 |
-| EUU          | European Union | SP.DYN.LE00.IN    | Life expectancy at birth, total (years)                                  |       1960 |      2024 |              65 |
-| EUU          | European Union | SP.URB.TOTL.IN.ZS | Urban population (% of total population)                                 |       1960 |      2025 |              66 |
-| FRA          | France         | NE.EXP.GNFS.ZS    | Exports of goods and services (% of GDP)                                 |       1960 |      2025 |              66 |
-| FRA          | France         | NE.IMP.GNFS.ZS    | Imports of goods and services (% of GDP)                                 |       1960 |      2025 |              66 |
-| FRA          | France         | NV.AGR.TOTL.CD    | Agriculture, forestry, and fishing, value added (current US$)            |       1960 |      2025 |              66 |
-| FRA          | France         | NV.AGR.TOTL.ZS    | Agriculture, forestry, and fishing, value added (% of GDP)               |       1960 |      2025 |              66 |
-| FRA          | France         | NV.IND.MANF.CD    | Manufacturing, value added (current US$)                                 |       1960 |      2025 |              66 |
-| FRA          | France         | NV.IND.MANF.ZS    | Manufacturing, value added (% of GDP)                                    |       1960 |      2025 |              66 |
-| FRA          | France         | NV.IND.TOTL.CD    | Industry (including construction), value added (current US$)             |       1960 |      2025 |              66 |
-| FRA          | France         | NV.IND.TOTL.ZS    | Industry (including construction), value added (% of GDP)                |       1960 |      2025 |              66 |
-| FRA          | France         | NV.SRV.TOTL.CD    | Services, value added (current US$)                                      |       1960 |      2025 |              66 |
-| FRA          | France         | NV.SRV.TOTL.ZS    | Services, value added (% of GDP)                                         |       1960 |      2025 |              66 |
-| FRA          | France         | NY.GDP.MKTP.KD.ZG | GDP growth (annual %)                                                    |       1961 |      2025 |              65 |
-| FRA          | France         | NY.GNP.PCAP.CD    | GNI per capita, Atlas method (current US$)                               |       1962 |      2025 |              64 |
-| FRA          | France         | SL.AGR.EMPL.ZS    | Employment in agriculture (% of total employment) (modeled ILO estimate) |       1991 |      2025 |              35 |
-| FRA          | France         | SL.IND.EMPL.ZS    | Employment in industry (% of total employment) (modeled ILO estimate)    |       1991 |      2025 |              35 |
-| FRA          | France         | SL.SRV.EMPL.ZS    | Employment in services (% of total employment) (modeled ILO estimate)    |       1991 |      2025 |              35 |
-| FRA          | France         | SP.DYN.LE00.IN    | Life expectancy at birth, total (years)                                  |       1960 |      2024 |              65 |
-| FRA          | France         | SP.URB.TOTL.IN.ZS | Urban population (% of total population)                                 |       1960 |      2025 |              66 |
-| GRC          | Greece         | NE.EXP.GNFS.ZS    | Exports of goods and services (% of GDP)                                 |       1960 |      2025 |              66 |
-| GRC          | Greece         | NE.IMP.GNFS.ZS    | Imports of goods and services (% of GDP)                                 |       1960 |      2025 |              66 |
-| GRC          | Greece         | NV.AGR.TOTL.CD    | Agriculture, forestry, and fishing, value added (current US$)            |       1995 |      2025 |              31 |
-| GRC          | Greece         | NV.AGR.TOTL.ZS    | Agriculture, forestry, and fishing, value added (% of GDP)               |       1995 |      2025 |              31 |
-| GRC          | Greece         | NV.IND.MANF.CD    | Manufacturing, value added (current US$)                                 |       1995 |      2025 |              31 |
-| GRC          | Greece         | NV.IND.MANF.ZS    | Manufacturing, value added (% of GDP)                                    |       1995 |      2025 |              31 |
-| GRC          | Greece         | NV.IND.TOTL.CD    | Industry (including construction), value added (current US$)             |       1995 |      2025 |              31 |
-| GRC          | Greece         | NV.IND.TOTL.ZS    | Industry (including construction), value added (% of GDP)                |       1995 |      2025 |              31 |
-| GRC          | Greece         | NV.SRV.TOTL.CD    | Services, value added (current US$)                                      |       1995 |      2025 |              31 |
-| GRC          | Greece         | NV.SRV.TOTL.ZS    | Services, value added (% of GDP)                                         |       1995 |      2025 |              31 |
-| GRC          | Greece         | NY.GDP.MKTP.KD.ZG | GDP growth (annual %)                                                    |       1961 |      2025 |              65 |
-| GRC          | Greece         | NY.GNP.PCAP.CD    | GNI per capita, Atlas method (current US$)                               |       1962 |      2025 |              64 |
-| GRC          | Greece         | SL.AGR.EMPL.ZS    | Employment in agriculture (% of total employment) (modeled ILO estimate) |       1991 |      2025 |              35 |
-| GRC          | Greece         | SL.IND.EMPL.ZS    | Employment in industry (% of total employment) (modeled ILO estimate)    |       1991 |      2025 |              35 |
-| GRC          | Greece         | SL.SRV.EMPL.ZS    | Employment in services (% of total employment) (modeled ILO estimate)    |       1991 |      2025 |              35 |
-| GRC          | Greece         | SP.DYN.LE00.IN    | Life expectancy at birth, total (years)                                  |       1960 |      2024 |              65 |
-| GRC          | Greece         | SP.URB.TOTL.IN.ZS | Urban population (% of total population)                                 |       1960 |      2025 |              66 |
-| HUN          | Hungary        | NE.EXP.GNFS.ZS    | Exports of goods and services (% of GDP)                                 |       1991 |      2025 |              35 |
-| HUN          | Hungary        | NE.IMP.GNFS.ZS    | Imports of goods and services (% of GDP)                                 |       1991 |      2025 |              35 |
-| HUN          | Hungary        | NV.AGR.TOTL.CD    | Agriculture, forestry, and fishing, value added (current US$)            |       1995 |      2025 |              31 |
-| HUN          | Hungary        | NV.AGR.TOTL.ZS    | Agriculture, forestry, and fishing, value added (% of GDP)               |       1995 |      2025 |              31 |
-| HUN          | Hungary        | NV.IND.MANF.CD    | Manufacturing, value added (current US$)                                 |       1995 |      2025 |              31 |
-| HUN          | Hungary        | NV.IND.MANF.ZS    | Manufacturing, value added (% of GDP)                                    |       1995 |      2025 |              31 |
-| HUN          | Hungary        | NV.IND.TOTL.CD    | Industry (including construction), value added (current US$)             |       1995 |      2025 |              31 |
-| HUN          | Hungary        | NV.IND.TOTL.ZS    | Industry (including construction), value added (% of GDP)                |       1995 |      2025 |              31 |
-| HUN          | Hungary        | NV.SRV.TOTL.CD    | Services, value added (current US$)                                      |       1995 |      2025 |              31 |
-| HUN          | Hungary        | NV.SRV.TOTL.ZS    | Services, value added (% of GDP)                                         |       1995 |      2025 |              31 |
-| HUN          | Hungary        | NY.GDP.MKTP.KD.ZG | GDP growth (annual %)                                                    |       1961 |      2025 |              65 |
-| HUN          | Hungary        | NY.GNP.PCAP.CD    | GNI per capita, Atlas method (current US$)                               |       1970 |      2025 |              56 |
-| HUN          | Hungary        | SL.AGR.EMPL.ZS    | Employment in agriculture (% of total employment) (modeled ILO estimate) |       1991 |      2025 |              35 |
-| HUN          | Hungary        | SL.IND.EMPL.ZS    | Employment in industry (% of total employment) (modeled ILO estimate)    |       1991 |      2025 |              35 |
-| HUN          | Hungary        | SL.SRV.EMPL.ZS    | Employment in services (% of total employment) (modeled ILO estimate)    |       1991 |      2025 |              35 |
-| HUN          | Hungary        | SP.DYN.LE00.IN    | Life expectancy at birth, total (years)                                  |       1960 |      2024 |              65 |
-| HUN          | Hungary        | SP.URB.TOTL.IN.ZS | Urban population (% of total population)                                 |       1960 |      2025 |              66 |
-| IRL          | Ireland        | NE.EXP.GNFS.ZS    | Exports of goods and services (% of GDP)                                 |       1970 |      2025 |              56 |
-| IRL          | Ireland        | NE.IMP.GNFS.ZS    | Imports of goods and services (% of GDP)                                 |       1970 |      2025 |              56 |
-| IRL          | Ireland        | NV.AGR.TOTL.CD    | Agriculture, forestry, and fishing, value added (current US$)            |       1995 |      2025 |              31 |
-| IRL          | Ireland        | NV.AGR.TOTL.ZS    | Agriculture, forestry, and fishing, value added (% of GDP)               |       1995 |      2025 |              31 |
-| IRL          | Ireland        | NV.IND.MANF.CD    | Manufacturing, value added (current US$)                                 |       1995 |      2025 |              31 |
-| IRL          | Ireland        | NV.IND.MANF.ZS    | Manufacturing, value added (% of GDP)                                    |       1995 |      2025 |              31 |
-| IRL          | Ireland        | NV.IND.TOTL.CD    | Industry (including construction), value added (current US$)             |       1995 |      2025 |              31 |
-| IRL          | Ireland        | NV.IND.TOTL.ZS    | Industry (including construction), value added (% of GDP)                |       1995 |      2025 |              31 |
-| IRL          | Ireland        | NV.SRV.TOTL.CD    | Services, value added (current US$)                                      |       1995 |      2025 |              31 |
-| IRL          | Ireland        | NV.SRV.TOTL.ZS    | Services, value added (% of GDP)                                         |       1995 |      2025 |              31 |
-| IRL          | Ireland        | NY.GDP.MKTP.KD.ZG | GDP growth (annual %)                                                    |       1961 |      2025 |              65 |
-| IRL          | Ireland        | NY.GNP.PCAP.CD    | GNI per capita, Atlas method (current US$)                               |       1962 |      2025 |              64 |
-| IRL          | Ireland        | SL.AGR.EMPL.ZS    | Employment in agriculture (% of total employment) (modeled ILO estimate) |       1991 |      2025 |              35 |
-| IRL          | Ireland        | SL.IND.EMPL.ZS    | Employment in industry (% of total employment) (modeled ILO estimate)    |       1991 |      2025 |              35 |
-| IRL          | Ireland        | SL.SRV.EMPL.ZS    | Employment in services (% of total employment) (modeled ILO estimate)    |       1991 |      2025 |              35 |
-| IRL          | Ireland        | SP.DYN.LE00.IN    | Life expectancy at birth, total (years)                                  |       1960 |      2024 |              65 |
-| IRL          | Ireland        | SP.URB.TOTL.IN.ZS | Urban population (% of total population)                                 |       1960 |      2025 |              66 |
-| ITA          | Italy          | NE.EXP.GNFS.ZS    | Exports of goods and services (% of GDP)                                 |       1970 |      2025 |              56 |
-| ITA          | Italy          | NE.IMP.GNFS.ZS    | Imports of goods and services (% of GDP)                                 |       1970 |      2025 |              56 |
-| ITA          | Italy          | NV.AGR.TOTL.CD    | Agriculture, forestry, and fishing, value added (current US$)            |       1990 |      2025 |              36 |
-| ITA          | Italy          | NV.AGR.TOTL.ZS    | Agriculture, forestry, and fishing, value added (% of GDP)               |       1990 |      2025 |              36 |
-| ITA          | Italy          | NV.IND.MANF.CD    | Manufacturing, value added (current US$)                                 |       1990 |      2025 |              36 |
-| ITA          | Italy          | NV.IND.MANF.ZS    | Manufacturing, value added (% of GDP)                                    |       1990 |      2025 |              36 |
-| ITA          | Italy          | NV.IND.TOTL.CD    | Industry (including construction), value added (current US$)             |       1990 |      2025 |              36 |
-| ITA          | Italy          | NV.IND.TOTL.ZS    | Industry (including construction), value added (% of GDP)                |       1990 |      2025 |              36 |
-| ITA          | Italy          | NV.SRV.TOTL.CD    | Services, value added (current US$)                                      |       1990 |      2025 |              36 |
-| ITA          | Italy          | NV.SRV.TOTL.ZS    | Services, value added (% of GDP)                                         |       1990 |      2025 |              36 |
-| ITA          | Italy          | NY.GDP.MKTP.KD.ZG | GDP growth (annual %)                                                    |       1961 |      2025 |              65 |
-| ITA          | Italy          | NY.GNP.PCAP.CD    | GNI per capita, Atlas method (current US$)                               |       1962 |      2025 |              64 |
-| ITA          | Italy          | SL.AGR.EMPL.ZS    | Employment in agriculture (% of total employment) (modeled ILO estimate) |       1991 |      2025 |              35 |
-| ITA          | Italy          | SL.IND.EMPL.ZS    | Employment in industry (% of total employment) (modeled ILO estimate)    |       1991 |      2025 |              35 |
-| ITA          | Italy          | SL.SRV.EMPL.ZS    | Employment in services (% of total employment) (modeled ILO estimate)    |       1991 |      2025 |              35 |
-| ITA          | Italy          | SP.DYN.LE00.IN    | Life expectancy at birth, total (years)                                  |       1960 |      2024 |              65 |
-| ITA          | Italy          | SP.URB.TOTL.IN.ZS | Urban population (% of total population)                                 |       1960 |      2025 |              66 |
-| LTU          | Lithuania      | NE.EXP.GNFS.ZS    | Exports of goods and services (% of GDP)                                 |       1995 |      2025 |              31 |
-| LTU          | Lithuania      | NE.IMP.GNFS.ZS    | Imports of goods and services (% of GDP)                                 |       1995 |      2025 |              31 |
-| LTU          | Lithuania      | NV.AGR.TOTL.CD    | Agriculture, forestry, and fishing, value added (current US$)            |       1995 |      2025 |              31 |
-| LTU          | Lithuania      | NV.AGR.TOTL.ZS    | Agriculture, forestry, and fishing, value added (% of GDP)               |       1995 |      2025 |              31 |
-| LTU          | Lithuania      | NV.IND.MANF.CD    | Manufacturing, value added (current US$)                                 |       1995 |      2025 |              31 |
-| LTU          | Lithuania      | NV.IND.MANF.ZS    | Manufacturing, value added (% of GDP)                                    |       1995 |      2025 |              31 |
-| LTU          | Lithuania      | NV.IND.TOTL.CD    | Industry (including construction), value added (current US$)             |       1995 |      2025 |              31 |
-| LTU          | Lithuania      | NV.IND.TOTL.ZS    | Industry (including construction), value added (% of GDP)                |       1995 |      2025 |              31 |
-| LTU          | Lithuania      | NV.SRV.TOTL.CD    | Services, value added (current US$)                                      |       1995 |      2025 |              31 |
-| LTU          | Lithuania      | NV.SRV.TOTL.ZS    | Services, value added (% of GDP)                                         |       1995 |      2025 |              31 |
-| LTU          | Lithuania      | NY.GDP.MKTP.KD.ZG | GDP growth (annual %)                                                    |       1991 |      2025 |              35 |
-| LTU          | Lithuania      | NY.GNP.PCAP.CD    | GNI per capita, Atlas method (current US$)                               |       1997 |      2025 |              29 |
-| LTU          | Lithuania      | SL.AGR.EMPL.ZS    | Employment in agriculture (% of total employment) (modeled ILO estimate) |       1991 |      2025 |              35 |
-| LTU          | Lithuania      | SL.IND.EMPL.ZS    | Employment in industry (% of total employment) (modeled ILO estimate)    |       1991 |      2025 |              35 |
-| LTU          | Lithuania      | SL.SRV.EMPL.ZS    | Employment in services (% of total employment) (modeled ILO estimate)    |       1991 |      2025 |              35 |
-| LTU          | Lithuania      | SP.DYN.LE00.IN    | Life expectancy at birth, total (years)                                  |       1960 |      2024 |              65 |
-| LTU          | Lithuania      | SP.URB.TOTL.IN.ZS | Urban population (% of total population)                                 |       1960 |      2025 |              66 |
-| LVA          | Latvia         | NE.EXP.GNFS.ZS    | Exports of goods and services (% of GDP)                                 |       1995 |      2025 |              31 |
-| LVA          | Latvia         | NE.IMP.GNFS.ZS    | Imports of goods and services (% of GDP)                                 |       1995 |      2025 |              31 |
-| LVA          | Latvia         | NV.AGR.TOTL.CD    | Agriculture, forestry, and fishing, value added (current US$)            |       1995 |      2025 |              31 |
-| LVA          | Latvia         | NV.AGR.TOTL.ZS    | Agriculture, forestry, and fishing, value added (% of GDP)               |       1995 |      2025 |              31 |
-| LVA          | Latvia         | NV.IND.MANF.CD    | Manufacturing, value added (current US$)                                 |       1995 |      2025 |              31 |
-| LVA          | Latvia         | NV.IND.MANF.ZS    | Manufacturing, value added (% of GDP)                                    |       1995 |      2025 |              31 |
-| LVA          | Latvia         | NV.IND.TOTL.CD    | Industry (including construction), value added (current US$)             |       1995 |      2025 |              31 |
-| LVA          | Latvia         | NV.IND.TOTL.ZS    | Industry (including construction), value added (% of GDP)                |       1995 |      2025 |              31 |
-| LVA          | Latvia         | NV.SRV.TOTL.CD    | Services, value added (current US$)                                      |       1995 |      2025 |              31 |
-| LVA          | Latvia         | NV.SRV.TOTL.ZS    | Services, value added (% of GDP)                                         |       1995 |      2025 |              31 |
-| LVA          | Latvia         | NY.GDP.MKTP.KD.ZG | GDP growth (annual %)                                                    |       1991 |      2025 |              35 |
-| LVA          | Latvia         | NY.GNP.PCAP.CD    | GNI per capita, Atlas method (current US$)                               |       1997 |      2025 |              29 |
-| LVA          | Latvia         | SL.AGR.EMPL.ZS    | Employment in agriculture (% of total employment) (modeled ILO estimate) |       1991 |      2025 |              35 |
-| LVA          | Latvia         | SL.IND.EMPL.ZS    | Employment in industry (% of total employment) (modeled ILO estimate)    |       1991 |      2025 |              35 |
-| LVA          | Latvia         | SL.SRV.EMPL.ZS    | Employment in services (% of total employment) (modeled ILO estimate)    |       1991 |      2025 |              35 |
-| LVA          | Latvia         | SP.DYN.LE00.IN    | Life expectancy at birth, total (years)                                  |       1960 |      2024 |              65 |
-| LVA          | Latvia         | SP.URB.TOTL.IN.ZS | Urban population (% of total population)                                 |       1960 |      2025 |              66 |
-| POL          | Poland         | NE.EXP.GNFS.ZS    | Exports of goods and services (% of GDP)                                 |       1995 |      2025 |              31 |
-| POL          | Poland         | NE.IMP.GNFS.ZS    | Imports of goods and services (% of GDP)                                 |       1995 |      2025 |              31 |
-| POL          | Poland         | NV.AGR.TOTL.CD    | Agriculture, forestry, and fishing, value added (current US$)            |       1995 |      2025 |              31 |
-| POL          | Poland         | NV.AGR.TOTL.ZS    | Agriculture, forestry, and fishing, value added (% of GDP)               |       1995 |      2025 |              31 |
-| POL          | Poland         | NV.IND.MANF.CD    | Manufacturing, value added (current US$)                                 |       1995 |      2025 |              31 |
-| POL          | Poland         | NV.IND.MANF.ZS    | Manufacturing, value added (% of GDP)                                    |       1995 |      2025 |              31 |
-| POL          | Poland         | NV.IND.TOTL.CD    | Industry (including construction), value added (current US$)             |       1995 |      2025 |              31 |
-| POL          | Poland         | NV.IND.TOTL.ZS    | Industry (including construction), value added (% of GDP)                |       1995 |      2025 |              31 |
-| POL          | Poland         | NV.SRV.TOTL.CD    | Services, value added (current US$)                                      |       1995 |      2025 |              31 |
-| POL          | Poland         | NV.SRV.TOTL.ZS    | Services, value added (% of GDP)                                         |       1995 |      2025 |              31 |
-| POL          | Poland         | NY.GDP.MKTP.KD.ZG | GDP growth (annual %)                                                    |       1991 |      2025 |              35 |
-| POL          | Poland         | NY.GNP.PCAP.CD    | GNI per capita, Atlas method (current US$)                               |       1992 |      2025 |              34 |
-| POL          | Poland         | SL.AGR.EMPL.ZS    | Employment in agriculture (% of total employment) (modeled ILO estimate) |       1991 |      2025 |              35 |
-| POL          | Poland         | SL.IND.EMPL.ZS    | Employment in industry (% of total employment) (modeled ILO estimate)    |       1991 |      2025 |              35 |
-| POL          | Poland         | SL.SRV.EMPL.ZS    | Employment in services (% of total employment) (modeled ILO estimate)    |       1991 |      2025 |              35 |
-| POL          | Poland         | SP.DYN.LE00.IN    | Life expectancy at birth, total (years)                                  |       1960 |      2024 |              65 |
-| POL          | Poland         | SP.URB.TOTL.IN.ZS | Urban population (% of total population)                                 |       1960 |      2025 |              66 |
-| PRT          | Portugal       | NE.EXP.GNFS.ZS    | Exports of goods and services (% of GDP)                                 |       1970 |      2025 |              56 |
-| PRT          | Portugal       | NE.IMP.GNFS.ZS    | Imports of goods and services (% of GDP)                                 |       1970 |      2025 |              56 |
-| PRT          | Portugal       | NV.AGR.TOTL.CD    | Agriculture, forestry, and fishing, value added (current US$)            |       1995 |      2025 |              31 |
-| PRT          | Portugal       | NV.AGR.TOTL.ZS    | Agriculture, forestry, and fishing, value added (% of GDP)               |       1995 |      2025 |              31 |
-| PRT          | Portugal       | NV.IND.MANF.CD    | Manufacturing, value added (current US$)                                 |       1995 |      2025 |              31 |
-| PRT          | Portugal       | NV.IND.MANF.ZS    | Manufacturing, value added (% of GDP)                                    |       1995 |      2025 |              31 |
-| PRT          | Portugal       | NV.IND.TOTL.CD    | Industry (including construction), value added (current US$)             |       1995 |      2025 |              31 |
-| PRT          | Portugal       | NV.IND.TOTL.ZS    | Industry (including construction), value added (% of GDP)                |       1995 |      2025 |              31 |
-| PRT          | Portugal       | NV.SRV.TOTL.CD    | Services, value added (current US$)                                      |       1995 |      2025 |              31 |
-| PRT          | Portugal       | NV.SRV.TOTL.ZS    | Services, value added (% of GDP)                                         |       1995 |      2025 |              31 |
-| PRT          | Portugal       | NY.GDP.MKTP.KD.ZG | GDP growth (annual %)                                                    |       1961 |      2025 |              65 |
-| PRT          | Portugal       | NY.GNP.PCAP.CD    | GNI per capita, Atlas method (current US$)                               |       1962 |      2025 |              64 |
-| PRT          | Portugal       | SL.AGR.EMPL.ZS    | Employment in agriculture (% of total employment) (modeled ILO estimate) |       1991 |      2025 |              35 |
-| PRT          | Portugal       | SL.IND.EMPL.ZS    | Employment in industry (% of total employment) (modeled ILO estimate)    |       1991 |      2025 |              35 |
-| PRT          | Portugal       | SL.SRV.EMPL.ZS    | Employment in services (% of total employment) (modeled ILO estimate)    |       1991 |      2025 |              35 |
-| PRT          | Portugal       | SP.DYN.LE00.IN    | Life expectancy at birth, total (years)                                  |       1960 |      2024 |              65 |
-| PRT          | Portugal       | SP.URB.TOTL.IN.ZS | Urban population (% of total population)                                 |       1960 |      2025 |              66 |
-| ROU          | Romania        | NE.EXP.GNFS.ZS    | Exports of goods and services (% of GDP)                                 |       1990 |      2025 |              36 |
-| ROU          | Romania        | NE.IMP.GNFS.ZS    | Imports of goods and services (% of GDP)                                 |       1990 |      2025 |              36 |
-| ROU          | Romania        | NV.AGR.TOTL.CD    | Agriculture, forestry, and fishing, value added (current US$)            |       1990 |      2025 |              36 |
-| ROU          | Romania        | NV.AGR.TOTL.ZS    | Agriculture, forestry, and fishing, value added (% of GDP)               |       1990 |      2025 |              36 |
-| ROU          | Romania        | NV.IND.MANF.CD    | Manufacturing, value added (current US$)                                 |       1991 |      2025 |              35 |
-| ROU          | Romania        | NV.IND.MANF.ZS    | Manufacturing, value added (% of GDP)                                    |       1991 |      2025 |              35 |
-| ROU          | Romania        | NV.IND.TOTL.CD    | Industry (including construction), value added (current US$)             |       1990 |      2025 |              36 |
-| ROU          | Romania        | NV.IND.TOTL.ZS    | Industry (including construction), value added (% of GDP)                |       1990 |      2025 |              36 |
-| ROU          | Romania        | NV.SRV.TOTL.CD    | Services, value added (current US$)                                      |       1990 |      2025 |              36 |
-| ROU          | Romania        | NV.SRV.TOTL.ZS    | Services, value added (% of GDP)                                         |       1990 |      2025 |              36 |
-| ROU          | Romania        | NY.GDP.MKTP.KD.ZG | GDP growth (annual %)                                                    |       1991 |      2025 |              35 |
-| ROU          | Romania        | NY.GNP.PCAP.CD    | GNI per capita, Atlas method (current US$)                               |       1992 |      2025 |              34 |
-| ROU          | Romania        | SL.AGR.EMPL.ZS    | Employment in agriculture (% of total employment) (modeled ILO estimate) |       1991 |      2025 |              35 |
-| ROU          | Romania        | SL.IND.EMPL.ZS    | Employment in industry (% of total employment) (modeled ILO estimate)    |       1991 |      2025 |              35 |
-| ROU          | Romania        | SL.SRV.EMPL.ZS    | Employment in services (% of total employment) (modeled ILO estimate)    |       1991 |      2025 |              35 |
-| ROU          | Romania        | SP.DYN.LE00.IN    | Life expectancy at birth, total (years)                                  |       1960 |      2024 |              65 |
-| ROU          | Romania        | SP.URB.TOTL.IN.ZS | Urban population (% of total population)                                 |       1960 |      2025 |              66 |
+No missing values were identified in the main fields or indicator values. The main data limitation is therefore uneven country-year availability.
 
+## 5. Cross-source comparison
 
-The country × indicator analysis provides a more detailed view of the temporal coverage and confirms that availability varies substantially across geographical entities.
+The three datasets provide different types of information and temporal coverage:
 
-A notable pattern is that life expectancy and urban population have the most consistent historical coverage. All 16 entities have life expectancy observations from 1960–2024 and urban population observations from 1960–2025.
+| Source            |   Rows | Entities | Indicators / event type          | Overall period |
+| ----------------- | -----: | -------: | -------------------------------- | -------------- |
+| Historical Events |    387 |       16 | Historical events                | 1900–2025      |
+| WDI               | 11 371 |       16 | 17 socioeconomic indicators      | 1960–2025      |
+| Maddison          |  4 349 |       15 | 3 historical economic indicators | 1900–2022      |
 
-In contrast, the economic and sectoral indicators generally have more recent starting dates:
+The datasets overlap geographically for the 15 European countries, while WDI and Historical Events additionally contain the European Union entity. Maddison provides the earliest historical coverage, while WDI provides the largest number of contemporary socioeconomic indicators and extends to 2025.
 
-* France and Greece have exports and imports available from 1960–2025.
-* Belgium, Germany, Spain, Ireland and Portugal have exports and imports from 1970–2025.
-* Czechia and Romania begin their exports and imports series in 1990.
-* Hungary begins in 1991.
-* Lithuania, Latvia and Poland begin in 1995.
+The different temporal structures should be considered when integrating the datasets into the analytical warehouse. In particular, the absence of an observation in a particular year. 
 
-Sectoral value-added indicators show a similar pattern. France has observations from 1960, while several countries begin in the 1990s. For example, Belgium, Spain, Estonia, Greece, Hungary, Ireland, Portugal and the Baltic countries generally have sectoral observations beginning in 1995. Italy and Romania begin in 1990, while Germany begins in 1991.
+## 6. Data quality assessment
 
-The GDP growth indicator is comparatively consistent across the dataset. Most countries have observations from 1961, while countries such as Czechia, Estonia, Lithuania, Latvia, Poland and Romania begin in 1991.
+The exploratory SQL checks found no missing values in the principal identifying and measurement fields of the three datasets. This indicates that the loaded staging data is structurally complete with respect to NULL values.
 
-GNI per capita also varies by country. Most Western European countries have observations from 1962, whereas later starting points occur for Czechia, Estonia, Hungary, Poland, Romania, Lithuania and Latvia.
+However, the profiling also demonstrates that **absence of NULL values does not mean complete temporal coverage**. Several indicators and countries have gaps within their broader first-to-last-year ranges. 
 
-The three employment indicators have a particularly consistent coverage pattern: all entities have observations from 1991 to 2025, giving 35 years of data for each country–indicator combination.

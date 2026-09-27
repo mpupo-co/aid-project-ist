@@ -1,71 +1,93 @@
-# Maddison Indicators — Data Dictionary
+# Maddison Project Database — Data Dictionary
 
-## Dataset Overview
+## 1. Source overview
 
-| Property                   | Description                                                                        |
-| -------------------------- | ---------------------------------------------------------------------------------- |
-| **Dataset**                | Maddison Project Database 2023                                                     |
-| **File**                   | `maddison_indicators.csv`                                                          |
-| **Purpose**                | Historical measures of GDP, GDP per capita, and population for European countries. |
-| **Rows**                   | 4 349                                                                              |
-| **Entities**               | 15 countries                                                                       |
-| **Indicators**             | 3                                                                                  |
-| **Year span**              | 1900–2022                                                                          |
-| **Geographic scope**       | 15 European countries; no `EUU` aggregate                                          |
-| **Grain**                  | Country × indicator × year                                                         |
-| **Missing values**         | None                                                                               |
-| **Duplicate observations** | None at country × indicator × year grain                                           |
+| Item                | Description                     |
+| ------------------- | ------------------------------- |
+| Source table        | `maddison_indicators`           |
+| Total rows          | **4 349**                       |
+| Distinct countries  | **15**                          |
+| Distinct indicators | **3**                           |
+| Overall year span   | **1900–2022**                   |
+| Geographic coverage | 15 European countries           |
+| Unit of observation | Country–indicator–year          |
+| Missing values      | No missing values detected      |
+| Source indicators   | GDP, GDP per capita, population |
 
-## Column Dictionary
+## 2. Columns
 
-| Column           | Type            | Description                                                              | Unit / Values         |
-| ---------------- | --------------- | ------------------------------------------------------------------------ | --------------------- |
-| `maddison_id`    | `INT`           | Surrogate identifier automatically generated for each staging record. It is the primary key of the staging table and was created for database management purposes. | Ordinal Number |
-| `country_iso3`   | `VARCHAR(3)`    | ISO 3166-1 alpha-3 identifier of the country.                            | ISO3 code             |
-| `country_name`   | `VARCHAR(15)`   | Country name corresponding to `country_iso3`.                            | Text                  |
-| `indicator_code` | `VARCHAR(5)`    | Identifier of the Maddison economic/demographic measure.                 | `GDP`, `GDPPC`, `POP` |
-| `indicator_name` | `TEXT`          | Descriptive name of the indicator.                                       | Text                  |
-| `year`           | `INT`           | Observation year.                                                        | Calendar year         |
-| `value`          | `DECIMAL(20,4)` | Numerical value of the corresponding indicator for the country and year. | Indicator-dependent   |
+| Column           | Type          | Description                            |
+| ---------------- | ------------- | -------------------------------------- |
+| `maddison_id`    | INT           | Unique identifier for each event record - Surrogate identifier automatically generated |
+| `country_iso3`   | VARCHAR(3)    | ISO3 country code                      |
+| `country_name`   | VARCHAR(15)   | Country name                           |
+| `indicator_code` | VARCHAR(5)    | Maddison indicator identifier          |
+| `indicator_name` | TEXT          | Indicator description                  |
+| `year`           | INT           | Observation year                       |
+| `value`          | DECIMAL(20,4) | Numerical value of the indicator       |
 
-## Indicators and Units
+## 3. Indicators and units
 
-| Code    | Indicator      | Unit                                  |
-| ------- | -------------- | ------------------------------------- |
-| `GDP`   | GDP            | 2011 international dollars            |
-| `GDPPC` | GDP per capita | 2011 international dollars per capita |
-| `POP`   | Population     | Thousands of persons                  |
+| Indicator | Unit                                 |
+| --------- | ------------------------------------ |
+| `gdp`     | GDP, 2011 international $            |
+| `gdppc`   | GDP per capita, 2011 international $ |
+| `pop`     | Population, thousands                |
 
-## Geographic and Temporal Coverage
+## 4. Geographic coverage
 
-Coverage is not uniform across countries.
+The dataset contains **15 countries**:
 
-| Country | First Year | Last Year | Years | Coverage      |
-| ------- | ---------: | --------: | ----: | ------------- |
-| BEL     |       1900 |      2022 |   123 | Complete      |
-| CZE     |       1970 |      2022 |    53 | Late start    |
-| DEU     |       1900 |      2022 |   123 | Complete      |
-| ESP     |       1900 |      2022 |   123 | Complete      |
-| EST     |       1973 |      2022 |    44 | Late start    |
-| FRA     |       1900 |      2022 |   123 | Complete      |
-| GRC     |       1900 |      2022 |   123 | Complete      |
-| HUN     |       1900 |      2022 |   100 | Internal gaps |
-| IRL     |       1913 |      2022 |   103 | Late start    |
-| ITA     |       1900 |      2022 |   123 | Complete      |
-| LTU     |       1973 |      2022 |    44 | Late start    |
-| LVA     |       1973 |      2022 |    44 | Late start    |
-| POL     |       1900 |      2022 |    89 | Internal gaps |
-| PRT     |       1900 |      2022 |   123 | Complete      |
-| ROU     |       1900 |      2022 |   123 | Complete      |
+Belgium, Czechia, Germany, Spain, Estonia, France, Greece, Hungary, Ireland, Italy, Lithuania, Latvia, Poland, Portugal, and Romania.
 
-Eight countries — **BEL, DEU, ESP, FRA, GRC, ITA, PRT and ROU** — have continuous coverage from 1900 to 2022.
+Unlike the WDI and Historical Events datasets, the Maddison dataset does **not** contain the `EUU` European Union entity.
 
-## Relevant Particularities
+All three indicators cover all 15 countries at least once.
 
-* The dataset is in **long format**, meaning GDP, GDP per capita and population are represented as separate observations identified by indicator_code, rather than as separate columns.
-* The analytical grain is `country_iso3 + indicator_code + year`.
-* `maddison_id` was generated in the staging table, is a technical surrogate key and is not the analytical grain.
-* Coverage is substantially longer for Western European countries than for several Central/Eastern European and Baltic countries.
-* Hungary and Poland contain internal temporal gaps.
-* `EUU` is not present in the Maddison dataset.
-* All three indicators use the same country × year structure, with no missing values in the supplied file.
+## 5. Overall temporal coverage
+
+The dataset covers **1900–2022**, corresponding to 123 distinct years.
+
+| Indicator      | First year | Last year | Distinct years |  Rows |
+| -------------- | ---------: | --------: | -------------: | ----: |
+| GDP            |       1900 |      2022 |            123 | 1 444 |
+| GDP per capita |       1900 |      2022 |            123 | 1 461 |
+| Population     |       1900 |      2022 |            123 | 1 444 |
+
+Although all three indicators have the same overall temporal span, the row counts indicate some country-year gaps.
+
+## 6. Country-level temporal coverage
+
+| Country   | First year | Last year | Distinct years | Rows |
+| --------- | ---------: | --------: | -------------: | ---: |
+| Belgium   |       1900 |      2022 |            123 |  369 |
+| Czechia   |       1970 |      2022 |             53 |  159 |
+| Germany   |       1900 |      2022 |            123 |  369 |
+| Spain     |       1900 |      2022 |            123 |  369 |
+| Estonia   |       1973 |      2022 |             44 |  132 |
+| France    |       1900 |      2022 |            123 |  369 |
+| Greece    |       1900 |      2022 |            123 |  369 |
+| Hungary   |       1900 |      2022 |            100 |  300 |
+| Ireland   |       1913 |      2022 |            103 |  309 |
+| Italy     |       1900 |      2022 |            123 |  369 |
+| Lithuania |       1973 |      2022 |             44 |  132 |
+| Latvia    |       1973 |      2022 |             44 |  132 |
+| Poland    |       1900 |      2022 |             89 |  267 |
+| Portugal  |       1900 |      2022 |            123 |  369 |
+| Romania   |       1900 |      2022 |            123 |  335 |
+
+The dataset provides a long historical perspective but with **uneven country coverage**.
+
+Full 1900–2022 coverage is available for Belgium, Germany, Spain, France, Greece, Italy, Portugal, and the reported time span of Romania, although Romania has fewer observations than a complete 3-indicator × 123-year series.
+
+Czechia begins in 1970; Estonia, Lithuania and Latvia begin in 1973; Ireland begins in 1913; Hungary has 100 distinct years; and Poland has 89 distinct years.
+
+## 7. Data quality and coverage gaps
+
+No missing country codes, country names, indicator codes, indicator names, years, or values were detected.
+
+The main limitation is therefore **uneven historical coverage**, rather than explicit missing values.
+
+For example, Romania has a 1900–2022 span but only **335 observations**, compared with 369 observations expected from a complete 123-year × 3-indicator series. This indicates missing country-indicator-year observations within the reported temporal span.
+
+The Maddison dataset should consequently be interpreted as a historical reconstruction with **country-specific availability**, rather than assuming that every country has a continuous annual series from 1900 onward.
