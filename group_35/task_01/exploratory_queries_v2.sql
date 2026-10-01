@@ -1,4 +1,4 @@
-USE DevelopmentStg;
+USE DevelopmentDB;
 
 -- Table 1: maddison_indicators
 

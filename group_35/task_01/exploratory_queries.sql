@@ -2,7 +2,7 @@
    TASK 1 - Exploratory SQL / Data Profiling
    ============================================================ */
 
-USE DevelopmentStg;
+USE DevelopmentDB;
 
 /* ============================================================
    1. HISTORICAL EVENTS

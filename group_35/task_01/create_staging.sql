@@ -1,36 +1,37 @@
-DROP DATABASE IF EXISTS DevelopmentStg;
-CREATE DATABASE DevelopmentStg;
-USE DevelopmentStg;
+DROP DATABASE IF EXISTS DevelopmentDB;
+CREATE DATABASE DevelopmentDB;
+USE DevelopmentDB;
+
 
 CREATE TABLE maddison_indicators (
-    maddison_id     INT         	NOT NULL AUTO_INCREMENT,
-    country_iso3    VARCHAR(3)  	NULL,
-    country_name    VARCHAR(15) 	NULL,
-    indicator_code  VARCHAR(5)  	NULL,
-    indicator_name  TEXT        	NULL,   
-    year            INT         	NULL,
-    value           DECIMAL(20,4)   NULL,
-    PRIMARY KEY (maddison_id)  
+  country_iso3   CHAR(3)       NOT NULL,
+  country_name   VARCHAR(50)   NOT NULL,
+  indicator_code VARCHAR(10)   NOT NULL,
+  indicator_name VARCHAR(100)  NOT NULL,
+  year           INT          NOT NULL,
+  value          DECIMAL(24,6) NOT NULL,
+  loaded_at      TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (country_iso3, indicator_code, year)
 );
 
 CREATE TABLE wdi_indicators (
-    wdi_id          INT         	NOT NULL AUTO_INCREMENT,
-    country_iso3    VARCHAR(3)    	NULL,
-    country_name    VARCHAR(15)   	NULL,
-    indicator_code  VARCHAR(30)   	NULL,
-    indicator_name  TEXT        	NULL,
-    year            INT         	NULL,
-    value           DECIMAL(20,4)   NULL,
-    PRIMARY KEY (wdi_id)
+  country_iso3   CHAR(3)       NOT NULL,
+  country_name   VARCHAR(50)   NOT NULL,
+  indicator_code VARCHAR(30)   NOT NULL,
+  indicator_name VARCHAR(100)  NOT NULL,
+  year           INT          NOT NULL,
+  value          DECIMAL(24,6) NOT NULL,
+  loaded_at      TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (country_iso3, indicator_code, year)
 );
 
 CREATE TABLE historical_events (
-    event_id        INT         NOT NULL AUTO_INCREMENT,
-    year            INT         NULL,
-    country_iso3    VARCHAR(3)  NULL,
-    country_name    VARCHAR(15) NULL,
-    event           TEXT        NULL,
-    category        VARCHAR(50) NULL,
-    economic_impact TEXT   		NULL,
-    PRIMARY KEY (event_id)
+  event_id        INT AUTO_INCREMENT PRIMARY KEY,
+  year            INT          NOT NULL,
+  country_iso3    CHAR(3)      NOT NULL,
+  country_name    VARCHAR(50)  NOT NULL,
+  event           VARCHAR(255) NOT NULL,
+  category        VARCHAR(50)  NOT NULL,
+  economic_impact VARCHAR(100) NOT NULL,
+  loaded_at       TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
