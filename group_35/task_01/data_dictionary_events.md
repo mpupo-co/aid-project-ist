@@ -26,10 +26,7 @@
 | `economic_impact` | `VARCHAR(100)` | — | `NULL` | Qualitative assessment of economic or social impact |
 | `loaded_at` | `TIMESTAMP` | — | `NOT NULL` | Ingestion audit timestamp (auto-populated by MySQL) |
 
-
-*   **Non-Uniqueness of Natural Keys**: A natural composite key like `(country_iso3, year)` **cannot** serve as a primary key because a single country can have multiple historical events in the same year.
-*   **Portugal Case Study**: Portugal (`PRT`) accounts for **125 historical events across only 88 distinct years**.
-*   **Conclusion**: Assigning an `AUTO_INCREMENT` surrogate primary key (`event_id`) guarantees row identity while preserving all multi-event years.
+**Primary key.** `(country_iso3, year)` is not unique. Adding `event` would make it unique, but it is a long text column and unwieldy as a key, so a surrogate `AUTO_INCREMENT` key (`event_id`) is used.
 
 ---
 
