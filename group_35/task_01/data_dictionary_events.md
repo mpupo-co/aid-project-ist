@@ -5,10 +5,11 @@
 | :--- | :--- |
 | **Staging Table Name** | `historical_events` |
 | **Target Database** | MySQL (`DevelopmentBD`) |
+| **Purpose** | Stores discrete historical, political, economic, social, and geopolitical events used to provide contextual information for longitudinal economic and development analysis. |
 | **Total Rows** | **387** |
 | **Distinct Entities** | **16 Entities** (15 European Countries + `EUU` European Union) |
 | **Overall Year Span** | **1900–2025** (110 distinct event years) |
-| **Unit of Observation** | Individual Historical Event |
+| **Unit of Observation** | One documented historical event associated with one entity and one calendar year |
 | **Primary Key** | Surrogate: `event_id INT AUTO_INCREMENT` |
 | **Audit Tracking** | `loaded_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP` |
 
@@ -52,17 +53,35 @@
 
 ---
 
-## 4. Event Categories & Qualitative Fields
-Events in `historical_events` are categorized across key development themes:
-*   **Political / Regime Shifts**: Monarchy dissolution, Estado Novo dictatorship, Carnation Revolution (1974), EU accessions.
-*   **Financial & Debt Crises**: State bankruptcies (1902), IMF bailout packages (1977, 1983, 2011), Eurozone sovereign debt crisis.
-*   **War & Conflicts**: World War I & II impacts, Colonial Wars (1961–1974), Spanish Civil War repercussions.
-*   **Social & Educational Reforms**: Creation of major universities (1911), educational expansion, healthcare reforms.
-*   **Infrastructure & Industrialization**: Highway construction, hydroelectric dam building, bridge inaugurations (Vasco da Gama Bridge, 1998).
+## 4. Event Categories
+
+The `category` field classifies events using short thematic labels. Observed categories include:
+
+| Category            | Number of Records | Intended Meaning                                                                                                   |
+| ------------------- | ----------------- | ------------------------------------------------------------------------------------------------------------------ |
+| Political           | 102               | Political transitions, institutional change, government actions, regime changes, and policy developments           |
+| Economy             | 89                | Macroeconomic developments, economic reforms, growth episodes, or structural economic changes                      |
+| War                 | 39                | Wars, conflicts, invasions, or direct conflict-related developments                                                |
+| Integration         | 40                | European integration, accession processes, treaty-related developments, or international institutional integration |
+| Financial           | 32                | Banking, sovereign-debt, monetary, fiscal, or financial-crisis events                                              |
+| Infrastructure      | 31                | Major transport, energy, construction, and public-infrastructure developments                                      |
+| Industry            | 20                | Industrialisation, production, manufacturing, and industrial-policy developments                                   |
+| Geopolitical        | 13                | International relations, territorial issues, and geopolitical realignments                                         |
+| Social              | 10                | Social, health, welfare, education, and demographic developments                                                   |
+| Colonial            | 5                 | Colonial administration, decolonisation, or colonial-conflict developments                                         |
+| Combined categories | 4                 | Events assigned to more than one domain, such as Infrastructure/Economy or War/Health                              |
+
+The field includes a small number of combined labels.
 
 ---
 
-## 6. Data Integrity & Staging Guidelines
-1. **Event Sparsity**: The table contains discrete qualitative milestones rather than a continuous annual panel.
-2. **Text Field Ingestion**: `event` and `economic_impact` contain special characters, dates, and semicolons.
-3. **Zero Nulls in Core Fields**: All `year`, `country_iso3`, `country_name`, and `event` attributes are 100% populated.
+## 5. Data Quality and Limitations
+
+**Completeness**
+
+* The core fields `year`, `country_iso3`, `country_name`, and `event` are fully populated. However, the dataset is event-based and sparse, not an annual continuous panel.
+
+**Temporal alignment**
+
+* The event table begins in 1900, whereas the WDI indicators begin in 1960.
+

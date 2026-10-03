@@ -1,60 +1,63 @@
-# TASK 1 - Staging Database and Profile Data
+# Data Analysis and Integration Project 26/27
+## Portugal's Economic and Human Development: A Century of Transformation
 
-## 1. Overview
+# TASK 1 - Staging Database and Data Profiling
 
-Exploratory SQL profiling was performed on the three source datasets used for the data warehouse: the Historical Events dataset, the World Development Indicators (WDI), and the Maddison Project Database. The profiling focused on row counts, geographic coverage, temporal coverage, indicator availability, missing values, and potential data-integrity issues.
+## 1.1 Staging Architecture 
 
-The results show that the three sources have complementary temporal and geographic characteristics. The Maddison dataset provides long-run historical economic indicators from 1900 to 2022, the WDI dataset provides more recent and broader socioeconomic indicators from 1960 to 2025, and the Historical Events dataset provides selected historical events associated with the countries and periods covered by the project.
+An isolated staging schema, `DevelopmentDB`, was implemented as an untransformed and non-destructive landing layer between the source CSV files and the target dimensional data warehouse. 
 
-## 2. Historical Events
+The staging layer preserves the source structure and values as far as possible, while enforcing the physical constraints required for reliable loading. It also provides a controlled environment for profiling source coverage, identifying structural inconsistencies, and validating data before warehouse integration.
 
-The Historical Events dataset contains **387 records covering 16 entities and 110 distinct years between 1900 and 2025**. The geographic coverage comprises 15 European countries and the European Union.
+Data ingestion was orchestrated in Apache Hop through the load_staging.hpl pipeline. The pipeline uses metadata-driven transformations with the sequence: `CSV File Input → Select Values → Table Output`.
 
-The number of events varies considerably between entities. Portugal has **125 event records**, substantially more than the other entities, while the remaining entities contain between 5 and 22 records.
+Three independent flows load the Maddison, World Development Indicators, and historical-events datasets into their respective staging table.
 
-Temporal coverage is also uneven. Most entities have events between 1900 and 2020, while Portugal contains events through 2025. The European Union has a narrower range, from 1957 to 2007. Portugal has 125 events distributed across 88 distinct years, demonstrating that multiple events may occur in the same year.
 
-No missing ISO3 codes, entity names, years, or event descriptions were detected. The principal limitation is therefore not missing data fields but the selective nature of event coverage. 
+## 1.2. Physical Schema 
 
-## 3. World Development Indicators
+| Element | Choice | Justification |
+|---|---|---|
+| Primary key, indicator tables | Composite `(country_iso3, indicator_code, year)` | Unique in the data (verified in profiling), so no surrogate key is needed. Duplicate rows in a source file are rejected at load instead of staged. This combination represents the intended analytical grain for both `maddison_indicators` and `wdi_indicators`.|
+| Primary key, events | Surrogate `event_id AUTO_INCREMENT` | `(country_iso3, year)` is not unique: 24 country-years have several events. Adding `event` makes it unique, but it is a text column, too long for a key. |
+| `country_iso3` | `CHAR(3)` | Codes are always 3 letters. Fixed length fits the data; exceeding 3 characters is rejected at load. Code validity is checked in profiling against the expected country list. |
+| `value` | `DECIMAL(24,6)` | Fixed-point storage avoids floating-point precision issues during numerical aggregation. The precision accommodates the largest observed monetary indicator values while retaining six decimal places. |
+| `year` | `INT` | The source stores calendar years as four-digit integer values. INT represents this format directly and supports numerical operations |
+| Text columns | `VARCHAR`, sized appropriate to the longest observed value | Variable-length fields reduce unnecessary storage while permitting the observed descriptions, labels, and event text. |
+| `NOT NULL` | All source columns, except `value` | Enforces validity at load: a row with a missing value is rejected instead of staged. |
+| `loaded_at` | `TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP` | Records when the current content was staged, so a warehouse value can be traced to the load that produced it. |
 
-The WDI dataset contains **11 371 observations, 16 entities, and 17 indicators**. The geographic coverage includes the same 15 European countries as the Maddison dataset plus the European Union.
 
-The overall WDI temporal span is **1960–2025**, but individual indicators have different periods of availability. Exports and imports cover 1960–2025, while GDP growth begins in 1961 and GNI per capita in 1962. The three employment indicators begin considerably later, in 1991. Life expectancy covers 1960–2024, while urban population covers 1960–2025.
+## 1.3 Load and validation
 
-The indicator-level row counts demonstrate that the nominal year range does not imply complete coverage. For example, exports and imports contain 757 observations each, compared with 1,056 observations that would result from a complete 16-entity × 66-year panel. Agriculture value added contains 547 observations, while GDP growth contains 860 observations over 65 years.
+The Apache Hop pipeline load_staging.hpl contains three ingestion flows, one for each source dataset. Each flow reads its CSV file, applies column selection and type alignment, and writes records to the relevant staging table.
 
-In contrast, the employment indicators each contain 560 observations, corresponding to complete coverage across the 16 entities for 1991–2025. Life expectancy contains 1 040 observations, corresponding to complete 1960–2024 coverage, and urban population contains 1 056 observations, corresponding to complete 1960–2025 coverage.
+**Invalid historical_event record**
+One invalidly structured source record was identified in the historical_events file for Ireland, in 1990. The record contains a comma in the event description.
 
-No missing values were found in the loaded `value` field or in the main identifying fields. The profiling also identified 120 negative GDP-growth observations. These were treated as valid observations because negative annual GDP growth represents economic contraction and is not inherently a data-integrity problem.
+The problematic raw structure was:
 
-## 4. Maddison Project Database
+```txt
+1990,IRL,Ireland,Celtic Tiger boom begins; strong FDI, IT and pharmaceuticals growth through the 1990s,Economy
+```
 
-The Maddison dataset contains **4 349 observations covering 15 countries and three indicators: GDP, GDP per capita, and population**. Its temporal span is **1900–2022**, providing the longest historical coverage of the three sources.
+Because the comma after `FDI` was not enclosed in quotation marks, the CSV parser interpreted it as a field delimiter. Consequently, the record was read as 7 fields rather than the expected 6 fields. A standard CSV load does not fail: it splits on every comma, shifts the columns and drops the last field, and the row count stays correct (387).
+The issue was identified through the exploratory queries, when listing categories.
 
-All three indicators have an overall span of 1900–2022. However, coverage differs substantially by country. Belgium, Germany, Spain, France, Greece, Italy, and Portugal have 123 distinct years, while Czechia begins in 1970 and Estonia, Lithuania, and Latvia begin in 1973. Ireland begins in 1913, Hungary contains 100 distinct years, and Poland contains 89 distinct years.
+To solve the issues, it was created a corrected copy of the source file which was produced by enclosing the event description in double quotation marks. No other line was changed. The corrected file was the one loaded. The staging table was subsequently reloaded and validated.
 
-Romania has a nominal 1900–2022 span but contains 335 observations rather than the 369 observations expected from complete coverage of three indicators across 123 years.
+## 1.4 Profiling findings
 
-No missing values were identified in the main fields or indicator values. The main data limitation is therefore uneven country-year availability.
-
-## 5. Cross-source comparison
-
-The three datasets provide different types of information and temporal coverage:
-
-| Source            |   Rows | Entities | Indicators / event type          | Overall period |
-| ----------------- | -----: | -------: | -------------------------------- | -------------- |
-| Historical Events |    387 |       16 | Historical events                | 1900–2025      |
-| WDI               | 11 371 |       16 | 17 socioeconomic indicators      | 1960–2025      |
-| Maddison          |  4 349 |       15 | 3 historical economic indicators | 1900–2022      |
-
-The datasets overlap geographically for the 15 European countries, while WDI and Historical Events additionally contain the European Union entity. Maddison provides the earliest historical coverage, while WDI provides the largest number of contemporary socioeconomic indicators and extends to 2025.
-
-The different temporal structures should be considered when integrating the datasets into the analytical warehouse. In particular, the absence of an observation in a particular year. 
-
-## 6. Data quality assessment
-
-The exploratory SQL checks found no missing values in the principal identifying and measurement fields of the three datasets. This indicates that the loaded staging data is structurally complete with respect to NULL values.
-
-However, the profiling also demonstrates that **absence of NULL values does not mean complete temporal coverage**. Several indicators and countries have gaps within their broader first-to-last-year ranges. 
-
+| Finding | Impact on the design |
+|---|---|
+| The European Union aggregate (EUU) exists in WDI and historical events but not in Maddison | WDI and events contain 16 entities, whereas Maddison contains 15; EUU is the only entity missing from Maddison.| The conformed entity dimension must include EUU as a supranational aggregate. Maddison-derived measures remain unavailable for this entity.|
+| GDP per capita is not always accompanied by GDP and population| Romania has 17 observations of gdppc without corresponding gdp values, spanning 1901–1919. | GDP, GDP per capita, and population must be loaded independently. Derived values should only be calculated where all required source measures are available.|
+| Maddison coverage is unbalanced | Czechia begins in 1970; Estonia, Lithuania, and Latvia begin in 1973; Ireland begins in 1913. Estonia, Hungary, Ireland, Lithuania, Latvia, Poland, and Romania also contain internal gaps.| The warehouse must retain missing observations as unavailable values. Missing years must not be zero-filled, and balanced-panel analysis requires a restricted period or missing-data strategy.   |
+| Hungary and Poland have substantial internal Maddison gaps| Hungary has 23 missing years per Maddison indicator, while Poland has 34 missing years per indicator. | Longitudinal analysis should explicitly account for irregular coverage, particularly for historical comparisons involving these entities.|
+| Romanian GDP and population have gaps not shared by GDP per capita | Romania has 17 missing years for gdp and pop, while gdppc remains available in 1901–1919.| The fact table cannot assume simultaneous availability of all Maddison indicators for a given entity-year.|
+| WDI sectoral value-added series have unequal start dates| France begins in 1960; Italy and Romania begin in 1990; Germany and EUU begin in 1991; Czechia begins in 1993; the remaining entities begin in 1995.| Broad cross-entity sectoral analysis should generally use 1995 onward. Earlier analyses must account for changing country coverage.|
+| WDI employment shares begin in 1991 | Agriculture, industry, and services employment series each contain 560 values, forming a complete 16-entity panel for 1991–2025. | Employment-based analysis must be restricted to 1991 onward.|
+| Manufacturing employment is unavailable | No indicator code matching manufacturing employment exists in WDI.| Manufacturing-related employment measures should remain unavailable rather than inferred from industrial employment.|
+| GDP growth includes valid negative values| The annual GDP-growth indicator ranges from -32.1% to 42.4%. | Negative values represent economic contraction and must be retained as valid observations.|
+| Historical events are disproportionately concentrated in Portugal| Portugal contains 125 of 387 event records.|
+| Historical events predate WDI coverage | Historical events span 1900–2025; 165 events occur before 1960, while WDI begins in 1960.| Pre-1960 events can be contextualised with Maddison indicators but cannot be directly linked to WDI observations.|

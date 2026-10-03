@@ -9,7 +9,7 @@ CREATE TABLE maddison_indicators (
   indicator_code VARCHAR(10)   NOT NULL,
   indicator_name VARCHAR(100)  NOT NULL,
   year           INT          NOT NULL,
-  value          DECIMAL(24,6) NOT NULL,
+  value          DECIMAL(24,6) NULL,
   loaded_at      TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (country_iso3, indicator_code, year)
 );
@@ -20,7 +20,7 @@ CREATE TABLE wdi_indicators (
   indicator_code VARCHAR(30)   NOT NULL,
   indicator_name VARCHAR(100)  NOT NULL,
   year           INT          NOT NULL,
-  value          DECIMAL(24,6) NOT NULL,
+  value          DECIMAL(24,6) NULL,
   loaded_at      TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (country_iso3, indicator_code, year)
 );

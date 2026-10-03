@@ -1,190 +1,166 @@
--- =============================================================================
--- Task 1: Exploratory Data Profiling Queries
--- Database: DevelopmentDB
--- Target Tables: maddison_indicators, wdi_indicators, historical_events
--- =============================================================================
-
+-- Task 1: exploratory queries on the staging database
 USE DevelopmentDB;
 
--- -----------------------------------------------------------------------------
--- SECTION 1: OVERVIEW & ROW COUNT VERIFICATION
--- Verify total volume loaded per staging table against source file benchmarks.
--- -----------------------------------------------------------------------------
-SELECT 'maddison_indicators' AS table_name, COUNT(*) AS total_rows FROM maddison_indicators
-UNION ALL
-SELECT 'wdi_indicators'      AS table_name, COUNT(*) AS total_rows FROM wdi_indicators
-UNION ALL
-SELECT 'historical_events'  AS table_name, COUNT(*) AS total_rows FROM historical_events;
 
+-- 1. DISTINCT COUNTRIES PER SOURCE
 
--- -----------------------------------------------------------------------------
--- SECTION 2: GEOGRAPHIC COVERAGE & ENTITY BREAKDOWN
--- Inspect distinct country codes and names per staging table to identify coverage.
--- -----------------------------------------------------------------------------
-
--- 2.1 Distinct entities in Maddison (15 countries)
-SELECT 
-    country_iso3, 
-    country_name, 
-    COUNT(*) AS total_observations,
-    MIN(year) AS min_year,
-    MAX(year) AS max_year,
-    COUNT(DISTINCT year) AS distinct_years
+-- 1.1 Countries in Maddison
+SELECT country_iso3, country_name, COUNT(*) AS total_rows,
+       MIN(year) AS first_year, MAX(year) AS last_year
 FROM maddison_indicators
 GROUP BY country_iso3, country_name
-ORDER BY country_name;
+ORDER BY country_iso3;
 
--- 2.2 Distinct entities in WDI (15 countries + EUU European Union aggregate)
-SELECT 
-    country_iso3, 
-    country_name, 
-    COUNT(*) AS total_observations,
-    MIN(year) AS min_year,
-    MAX(year) AS max_year,
-    COUNT(DISTINCT year) AS distinct_years
+-- 1.2 Countries in WDI
+SELECT country_iso3, country_name, COUNT(*) AS total_rows,
+       MIN(year) AS first_year, MAX(year) AS last_year
 FROM wdi_indicators
 GROUP BY country_iso3, country_name
-ORDER BY country_name;
+ORDER BY country_iso3;
 
--- 2.3 Distinct entities in Historical Events (16 entities, Portugal focus)
-SELECT 
-    country_iso3, 
-    country_name, 
-    COUNT(*) AS total_events,
-    MIN(year) AS min_year,
-    MAX(year) AS max_year,
-    COUNT(DISTINCT year) AS distinct_years
+-- 1.3 Countries in the events
+SELECT country_iso3, country_name, COUNT(*) AS total_events,
+       MIN(year) AS first_year, MAX(year) AS last_year
 FROM historical_events
 GROUP BY country_iso3, country_name
 ORDER BY total_events DESC;
 
-
--- -----------------------------------------------------------------------------
--- SECTION 3: TEMPORAL COVERAGE & YEAR SPANS
--- Profile overall year ranges, distinct year counts, and indicator availability.
--- -----------------------------------------------------------------------------
-
--- 3.1 Overall temporal span per table
-SELECT 
-    'maddison_indicators' AS table_name,
-    MIN(year) AS start_year,
-    MAX(year) AS end_year,
-    MAX(year) - MIN(year) + 1 AS nominal_span_years,
-    COUNT(DISTINCT year) AS actual_distinct_years
-FROM maddison_indicators
-UNION ALL
-SELECT 
-    'wdi_indicators' AS table_name,
-    MIN(year) AS start_year,
-    MAX(year) AS end_year,
-    MAX(year) - MIN(year) + 1 AS nominal_span_years,
-    COUNT(DISTINCT year) AS actual_distinct_years
+-- 1.4 Countries missing from a source (expected: EUU is not in Maddison)
+SELECT DISTINCT country_iso3 AS in_wdi_not_in_maddison
 FROM wdi_indicators
-UNION ALL
-SELECT 
-    'historical_events' AS table_name,
-    MIN(year) AS start_year,
-    MAX(year) AS end_year,
-    MAX(year) - MIN(year) + 1 AS nominal_span_years,
-    COUNT(DISTINCT year) AS actual_distinct_years
-FROM historical_events;
+WHERE country_iso3 NOT IN (SELECT country_iso3 FROM maddison_indicators);
 
--- 3.2 WDI temporal coverage by indicator group (detecting 1960 vs 1991 start years)
-SELECT 
-    indicator_code,
-    indicator_name,
-    MIN(year) AS min_year,
-    MAX(year) AS max_year,
-    COUNT(DISTINCT year) AS distinct_years,
-    COUNT(*) AS total_rows,
-    COUNT(DISTINCT country_iso3) AS covered_entities
-FROM wdi_indicators
-GROUP BY indicator_code, indicator_name
-ORDER BY min_year, indicator_code;
-
-
--- -----------------------------------------------------------------------------
--- SECTION 4: DATA QUALITY, NULL & MISSING VALUE CHECKS
--- Verify that all mandatory identifying and measurement columns are complete.
--- -----------------------------------------------------------------------------
-
--- 4.1 Null check for Maddison staging
-SELECT 
-    SUM(CASE WHEN country_iso3 IS NULL THEN 1 ELSE 0 END) AS null_iso3,
-    SUM(CASE WHEN country_name IS NULL THEN 1 ELSE 0 END) AS null_name,
-    SUM(CASE WHEN indicator_code IS NULL THEN 1 ELSE 0 END) AS null_indicator_code,
-    SUM(CASE WHEN year IS NULL THEN 1 ELSE 0 END) AS null_year,
-    SUM(CASE WHEN value IS NULL THEN 1 ELSE 0 END) AS null_value
-FROM maddison_indicators;
-
--- 4.2 Null check for WDI staging
-SELECT 
-    SUM(CASE WHEN country_iso3 IS NULL THEN 1 ELSE 0 END) AS null_iso3,
-    SUM(CASE WHEN country_name IS NULL THEN 1 ELSE 0 END) AS null_name,
-    SUM(CASE WHEN indicator_code IS NULL THEN 1 ELSE 0 END) AS null_indicator_code,
-    SUM(CASE WHEN year IS NULL THEN 1 ELSE 0 END) AS null_year,
-    SUM(CASE WHEN value IS NULL THEN 1 ELSE 0 END) AS null_value
-FROM wdi_indicators;
-
--- 4.3 Null check for Historical Events staging
-SELECT 
-    SUM(CASE WHEN country_iso3 IS NULL THEN 1 ELSE 0 END) AS null_iso3,
-    SUM(CASE WHEN country_name IS NULL THEN 1 ELSE 0 END) AS null_name,
-    SUM(CASE WHEN year IS NULL THEN 1 ELSE 0 END) AS null_year,
-    SUM(CASE WHEN event IS NULL OR TRIM(event) = '' THEN 1 ELSE 0 END) AS null_event
-FROM historical_events;
-
-
--- -----------------------------------------------------------------------------
--- SECTION 5: PRIMARY KEY & UNIQUENESS INTEGRITY CHECKS
--- Verify primary key assumptions and detect multi-event occurrences.
--- -----------------------------------------------------------------------------
-
--- 5.1 Check Maddison composite key (country_iso3, indicator_code, year)
-SELECT country_iso3, indicator_code, year, COUNT(*) AS duplicate_count
-FROM maddison_indicators
-GROUP BY country_iso3, indicator_code, year
-HAVING COUNT(*) > 1;
-
--- 5.2 Check WDI composite key (country_iso3, indicator_code, year)
-SELECT country_iso3, indicator_code, year, COUNT(*) AS duplicate_count
-FROM wdi_indicators
-GROUP BY country_iso3, indicator_code, year
-HAVING COUNT(*) > 1;
-
--- 5.3 Profile multi-event years in Historical Events (validates AUTO_INCREMENT PK)
-SELECT country_iso3, country_name, year, COUNT(*) AS events_in_year
+SELECT DISTINCT country_iso3 AS in_events_not_in_maddison
 FROM historical_events
-GROUP BY country_iso3, country_name, year
+WHERE country_iso3 NOT IN (SELECT country_iso3 FROM maddison_indicators);
+
+
+-- 2. YEAR RANGES
+
+-- 2.1 Rows, entities and year span per source
+SELECT 'maddison_indicators' AS source, COUNT(*) AS total_rows,
+       COUNT(DISTINCT country_iso3) AS entities,
+       MIN(year) AS first_year, MAX(year) AS last_year
+FROM maddison_indicators
+UNION ALL
+SELECT 'wdi_indicators', COUNT(*), COUNT(DISTINCT country_iso3), MIN(year), MAX(year)
+FROM wdi_indicators
+UNION ALL
+SELECT 'historical_events', COUNT(*), COUNT(DISTINCT country_iso3), MIN(year), MAX(year)
+FROM historical_events;
+
+-- 2.2 Year range per Maddison indicator
+SELECT indicator_code, COUNT(*) AS total_rows, COUNT(DISTINCT country_iso3) AS entities,
+       MIN(year) AS first_year, MAX(year) AS last_year
+FROM maddison_indicators
+GROUP BY indicator_code;
+
+-- 2.3 Year range per WDI indicator (shows the later start of sector and employment series)
+SELECT indicator_code, indicator_name, COUNT(*) AS total_rows,
+       COUNT(DISTINCT country_iso3) AS entities,
+       MIN(year) AS first_year, MAX(year) AS last_year
+FROM wdi_indicators
+GROUP BY indicator_code, indicator_name
+ORDER BY first_year, indicator_code;
+
+
+-- 3. DATA INTEGRITY
+
+-- 3.1 Rows loaded (expected: 4349, 11371 and 387, the same as the files)
+SELECT 'maddison_indicators' AS table_name, COUNT(*) AS total_rows FROM maddison_indicators
+UNION ALL
+SELECT 'wdi_indicators', COUNT(*) FROM wdi_indicators
+UNION ALL
+SELECT 'historical_events', COUNT(*) FROM historical_events;
+
+-- 3.2 Each ISO3 code has only one name across the sources (expected: no rows)
+SELECT country_iso3, COUNT(DISTINCT country_name) AS names
+FROM (SELECT country_iso3, country_name FROM maddison_indicators
+      UNION
+      SELECT country_iso3, country_name FROM wdi_indicators
+      UNION
+      SELECT country_iso3, country_name FROM historical_events) AS all_countries
+GROUP BY country_iso3
+HAVING COUNT(DISTINCT country_name) > 1;
+
+-- 3.3 Each indicator code has only one name (expected: no rows)
+SELECT indicator_code, COUNT(DISTINCT indicator_name) AS names
+FROM (SELECT indicator_code, indicator_name FROM maddison_indicators
+      UNION
+      SELECT indicator_code, indicator_name FROM wdi_indicators) AS all_indicators
+GROUP BY indicator_code
+HAVING COUNT(DISTINCT indicator_name) > 1;
+
+-- 3.4 The same event repeated (expected: no rows)
+SELECT year, country_iso3, event, COUNT(*) AS repeated
+FROM historical_events
+GROUP BY year, country_iso3, event
+HAVING COUNT(*) > 1;
+
+-- 3.5 Categories of the events (expected: short category names only)
+SELECT category, COUNT(*) AS total_events
+FROM historical_events
+GROUP BY category
+ORDER BY category;
+
+-- 3.6 Percentage indicators outside 0-100 (expected: no rows; only exports and imports can exceed 100)
+SELECT * FROM wdi_indicators
+WHERE indicator_code LIKE '%.ZS'
+  AND indicator_code NOT IN ('NE.EXP.GNFS.ZS', 'NE.IMP.GNFS.ZS')
+  AND (value < 0 OR value > 100);
+
+-- 3.10 Maddison: gdp should equal gdppc * pop * 1000 (expected: no rows)
+SELECT g.country_iso3, g.year, g.value AS gdp, c.value * p.value * 1000 AS gdppc_x_pop
+FROM maddison_indicators g
+JOIN maddison_indicators c ON c.country_iso3 = g.country_iso3 AND c.year = g.year
+                          AND c.indicator_code = 'gdppc'
+JOIN maddison_indicators p ON p.country_iso3 = g.country_iso3 AND p.year = g.year
+                          AND p.indicator_code = 'pop'
+WHERE g.indicator_code = 'gdp'
+  AND ABS(g.value / (c.value * p.value * 1000) - 1) > 0.01;
+
+
+-- 4. COVERAGE AND PARTICULARITIES (for the data dictionaries)
+
+-- 4.1 Series with missing years between their first and last year
+SELECT 'maddison' AS source, country_iso3, indicator_code, MIN(year) AS first_year,
+       MAX(year) AS last_year, MAX(year) - MIN(year) + 1 - COUNT(*) AS missing_years
+FROM maddison_indicators
+GROUP BY country_iso3, indicator_code
+HAVING MAX(year) - MIN(year) + 1 <> COUNT(*)
+UNION ALL
+SELECT 'wdi', country_iso3, indicator_code, MIN(year), MAX(year),
+       MAX(year) - MIN(year) + 1 - COUNT(*)
+FROM wdi_indicators
+GROUP BY country_iso3, indicator_code
+HAVING MAX(year) - MIN(year) + 1 <> COUNT(*);
+
+-- 4.2 Maddison: years with gdppc but without gdp (explains why gdppc has more rows)
+SELECT c.country_iso3, COUNT(*) AS years_without_gdp,
+       MIN(c.year) AS first_year, MAX(c.year) AS last_year
+FROM maddison_indicators c
+LEFT JOIN maddison_indicators g ON g.country_iso3 = c.country_iso3 AND g.year = c.year
+                               AND g.indicator_code = 'gdp'
+WHERE c.indicator_code = 'gdppc' AND g.year IS NULL
+GROUP BY c.country_iso3;
+
+-- 4.3 WDI: first year of sector value added per country
+SELECT country_iso3, MIN(year) AS first_year
+FROM wdi_indicators
+WHERE indicator_code LIKE 'NV.%'
+GROUP BY country_iso3
+ORDER BY first_year, country_iso3;
+
+-- 4.4 WDI: first year of sector employment per country
+SELECT country_iso3, MIN(year) AS first_year
+FROM wdi_indicators
+WHERE indicator_code LIKE 'SL.%'
+GROUP BY country_iso3
+ORDER BY first_year, country_iso3;
+
+-- 4.5 Events: country-years with more than one event (why event_id is the primary key)
+SELECT country_iso3, year, COUNT(*) AS events_in_year
+FROM historical_events
+GROUP BY country_iso3, year
 HAVING COUNT(*) > 1
-ORDER BY events_in_year DESC, year;
-
-
--- -----------------------------------------------------------------------------
--- SECTION 6: VALUE RANGE & ANOMALY ANALYSIS
--- Check for negative values, extreme outliers, and benchmark aggregate behavior.
--- -----------------------------------------------------------------------------
-
--- 6.1 Identify negative GDP growth observations in WDI (valid economic contractions)
-SELECT country_iso3, country_name, year, value AS gdp_growth_pct
-FROM wdi_indicators
-WHERE indicator_code = 'NY.GDP.MKTP.KD.ZG' AND value < 0
-ORDER BY value ASC;
-
--- 6.2 Value summary statistics (MIN/MAX/AVG per indicator)
-SELECT 
-    indicator_code,
-    indicator_name,
-    ROUND(MIN(value), 4) AS min_val,
-    ROUND(MAX(value), 4) AS max_val,
-    ROUND(AVG(value), 4) AS avg_val
-FROM wdi_indicators
-GROUP BY indicator_code, indicator_name
-ORDER BY indicator_code;
-
--- 6.3 Verify European Union aggregate (EUU) indicator coverage
-SELECT indicator_code, indicator_name, COUNT(*) AS euu_rows, MIN(year) AS min_yr, MAX(year) AS max_yr
-FROM wdi_indicators
-WHERE country_iso3 = 'EUU'
-GROUP BY indicator_code, indicator_name
-ORDER BY indicator_code;
+ORDER BY events_in_year DESC, country_iso3, year;

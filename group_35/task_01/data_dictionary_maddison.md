@@ -5,6 +5,7 @@
 | :--- | :--- |
 | **Staging Table Name** | `maddison_indicators` |
 | **Target Database** | MySQL (`DevelopmentDB`) |
+| **Purpose** | Stores annual macroeconomic indicators for the selected European countries.| 
 | **Total Rows** | **4,349** |
 | **Distinct Entities** | **15 European Countries** |
 | **Distinct Indicators** | **3 Metrics** (`gdp`, `gdppc`, `pop`) |
@@ -35,11 +36,15 @@
 | `gdppc` | Real GDP per capita | Real 2011 International $ per person | `FACT_ECONOMY` |
 | `pop` | Total Population | Thousands of inhabitants | `FACT_SOCIETY` |
 
+The following relationship was validated:
+`GDP = GDP per capita × Population × 1000`
+
 ---
 
 ## 4. Geographic Coverage
 The staging table covers **15 European countries**:
 *   Belgium (`BEL`), Czechia (`CZE`), Germany (`DEU`), Spain (`ESP`), Estonia (`EST`), France (`FRA`), Greece (`GRC`), Hungary (`HUN`), Ireland (`IRL`), Italy (`ITA`), Lithuania (`LTU`), Latvia (`LVA`), Poland (`POL`), Portugal (`PRT`), and Romania (`ROU`).
+
 *   *Note*: Unlike the WDI and Events datasets, Maddison excludes the European Union (`EUU`) regional aggregate.
 
 ---
@@ -75,8 +80,22 @@ Although all three indicators have the same overall temporal span, the row count
 | Romania | `ROU` | 1900 | 2022 | 123 | 335 | 123-year span with internal missing years |
 
 ---
+## 7. Missing information
 
-## 7. Data Integrity & Staging Notes
+The following countries contain internal gaps between their first and last recorded years:
+
+| Country   | Indicators | Missing Years per Indicator |
+| --------- | ------------------- | ------------------------------------: |
+| Estonia   | gdp, gdppc, pop     | 6                                    |
+| Hungary   | gdp, gdppc, pop     | 23                                   |
+| Ireland   | gdp, gdppc, pop     | 7                                    |
+| Lithuania | gdp, gdppc, pop     | 6                                    |
+| Latvia    | gdp, gdppc, pop     | 6                                    |
+| Poland    | gdp, gdppc, pop     | 34                                   |
+| Romania   | gdp, pop            | 17                                   |
+
+
+## 8. Data Integrity & Staging Notes
 1. **Zero Null Key Fields**: All mandatory fields (`country_iso3`, `indicator_code`, `year`, `country_name`, `indicator_name`) are fully populated.
 2. **Primary Key Uniqueness**: The composite primary key `(country_iso3, indicator_code, year)` is strictly enforced and verified without duplicate conflicts.
 3. **Internal Gaps**: Romania contains 335 rows across a 1900–2022 time span (34 rows short of a full 369-row panel), reflecting missing historical years in the raw source.

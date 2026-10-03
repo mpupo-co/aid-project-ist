@@ -5,6 +5,7 @@
 | :--- | :--- |
 | **Staging Table Name** | `wdi_indicators` |
 | **Target Database** | MySQL (`DevelopmentDB`) |
+| **Purpose** | Stores annual World Development Indicators for selected European countries and the European Union. |
 | **Total Rows** | **11,371** |
 | **Distinct Entities** | **16 Entities** (15 European Countries + `EUU` European Union) |
 | **Distinct Indicators** | **17 Development Metrics** |
@@ -12,6 +13,8 @@
 | **Unit of Observation** | Entity–Indicator–Year |
 | **Primary Key** | Composite: `(country_iso3, indicator_code, year)` |
 | **Audit Tracking** | `loaded_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP` |
+
+The table has a common global span of 1960–2025, but individual indicators and entities have different first years, final years, and degrees of completeness.
 
 ---
 
