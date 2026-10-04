@@ -21,7 +21,7 @@ The Maddison dataset provides the longest historical coverage among the project'
 ## 2. Table Schema & Column Specifications
 | Column Name | MySQL Data Type | Key Type | Nullable | Description |
 | :--- | :--- | :--- | :--- | :--- |
-| `country_iso3` | `VARCHAR(3)` | **PK** | `NOT NULL` | Standard 3-letter ISO country code |
+| `country_iso3` | `CHAR(3)` | **PK** | `NOT NULL` | Standard 3-letter ISO country code |
 | `country_name` | `VARCHAR(50)` | — | `NOT NULL` | Full country name |
 | `indicator_code` | `VARCHAR(50)` | **PK** | `NOT NULL` | Short metric identifier (`gdp`, `gdppc`, `pop`) |
 | `indicator_name` | `VARCHAR(100)` | — | `NOT NULL` | Full descriptive title of the economic metric |

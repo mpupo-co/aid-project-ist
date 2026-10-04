@@ -21,7 +21,7 @@ The table has a common global span of 1960–2025, but individual indicators and
 ## 2. Table Schema & Column Specifications
 | Column Name | MySQL Data Type | Key Type | Nullable | Description |
 | :--- | :--- | :--- | :--- | :--- |
-| `country_iso3` | `VARCHAR(3)` | **PK** | `NOT NULL` | Standard 3-letter ISO code or entity aggregate |
+| `country_iso3` | `CHAR(3)` | **PK** | `NOT NULL` | Standard 3-letter ISO code or entity aggregate |
 | `country_name` | `VARCHAR(50)` | — | `NOT NULL` | Full country or entity name |
 | `indicator_code` | `VARCHAR(30)` | **PK** | `NOT NULL` | World Bank / WDI indicator code|
 | `indicator_name` | `VARCHAR(100)` | — | `NOT NULL` | Full metric description |
