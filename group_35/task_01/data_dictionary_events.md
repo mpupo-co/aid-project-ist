@@ -4,7 +4,7 @@
 | Item | Description |
 | :--- | :--- |
 | **Staging Table Name** | `historical_events` |
-| **Target Database** | MySQL (`DevelopmentBD`) |
+| **Target Database** | `DevelopmentBD` |
 | **Purpose** | Stores discrete historical, political, economic, social, and geopolitical events used to provide contextual information for longitudinal economic and development analysis. |
 | **Total Rows** | **387** |
 | **Distinct Entities** | **16 Entities** (15 European Countries + `EUU` European Union) |
@@ -57,21 +57,21 @@
 
 The `category` field classifies events using short thematic labels. Observed categories include:
 
-| Category            | Number of Records | Intended Meaning                                                                                                   |
-| ------------------- | ----------------- | ------------------------------------------------------------------------------------------------------------------ |
-| Political           | 102               | Political transitions, institutional change, government actions, regime changes, and policy developments           |
-| Economy             | 89                | Macroeconomic developments, economic reforms, growth episodes, or structural economic changes                      |
-| War                 | 39                | Wars, conflicts, invasions, or direct conflict-related developments                                                |
-| Integration         | 40                | European integration, accession processes, treaty-related developments, or international institutional integration |
-| Financial           | 32                | Banking, sovereign-debt, monetary, fiscal, or financial-crisis events                                              |
-| Infrastructure      | 31                | Major transport, energy, construction, and public-infrastructure developments                                      |
-| Industry            | 20                | Industrialisation, production, manufacturing, and industrial-policy developments                                   |
-| Geopolitical        | 13                | International relations, territorial issues, and geopolitical realignments                                         |
-| Social              | 10                | Social, health, welfare, education, and demographic developments                                                   |
-| Colonial            | 5                 | Colonial administration, decolonisation, or colonial-conflict developments                                         |
-| Combined categories | 4                 | Events assigned to more than one domain, such as Infrastructure/Economy or War/Health                              |
+| Category            | Number of Records |
+| ------------------- | ----------------- | 
+| Political           | 102               |
+| Economy             | 89                |
+| War                 | 39                |
+| Integration         | 40                |
+| Financial           | 32                | 
+| Infrastructure      | 31                | 
+| Industry            | 20                |
+| Geopolitical        | 13                |
+| Social              | 10                |
+| Colonial            | 5                 |
+| Combined categories | 4                 |
 
-The field includes a small number of combined labels.
+Combined categories comprise events assigned with more than onde category, such as Infrastructure/Economy or War/Health. 
 
 ---
 
@@ -79,7 +79,15 @@ The field includes a small number of combined labels.
 
 **Completeness**
 
-* The core fields `year`, `country_iso3`, `country_name`, and `event` are fully populated. However, the dataset is event-based and sparse, not an annual continuous panel.
+* The core fields `year`, `country_iso3`, `country_name`, and `event` are fully populated. However, the dataset is event-based and sparse.
+
+**Temporal coverage**
+
+* Across the full 1900–2025 span (126 years), only 110 years contain events, leaving 16 years with no recorded events for any country.
+
+**Asymmetry** 
+
+* Portugal accounts for 125 of the 387 total event records (more than 30%), while the remaining 15 entities range between 5 and 22 events each. This imbalance aligns with the project scope: Portugal is the primary focus country.
 
 **Temporal alignment**
 
