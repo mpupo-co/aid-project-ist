@@ -14,6 +14,8 @@
 | **Primary Key** | Composite: `(country_iso3, indicator_code, year)` |
 | **Audit Tracking** | `loaded_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP` |
 
+The Maddison dataset provides the longest historical coverage among the project's quantitative sources, beginning in 1900 for several countries and extending through 2022. However, coverage is not uniform across countries. Some countries have shorter historical series or internal gaps.
+
 ---
 
 ## 2. Table Schema & Column Specifications
@@ -23,7 +25,7 @@
 | `country_name` | `VARCHAR(50)` | — | `NOT NULL` | Full country name |
 | `indicator_code` | `VARCHAR(50)` | **PK** | `NOT NULL` | Short metric identifier (`gdp`, `gdppc`, `pop`) |
 | `indicator_name` | `VARCHAR(100)` | — | `NOT NULL` | Full descriptive title of the economic metric |
-| `year` | `LINT` | **PK** | `NOT NULL` | Observation year (1900–2022) |
+| `year` | `INT` | **PK** | `NOT NULL` | Observation year (1900–2022) |
 | `value` | `DECIMAL(24,6)` | — | `NOT NULL` | Numerical value of the indicator |
 | `loaded_at` | `TIMESTAMP` | — | `NOT NULL` | Ingestion audit timestamp (auto-populated by MySQL) |
 
@@ -62,6 +64,9 @@ Although all three indicators have the same overall temporal span, the row count
 ---
 
 ## 6. Country-Level Breakdown & Historical Gaps
+
+The following table summarizes the temporal coverage and number of observations available for each country across the three indicators.
+
 | Country Name | ISO3 | First Year | Last Year | Distinct Years | Total Rows | Historical Notes |
 | :--- | :---: | :---: | :---: | :---: | :---: | :--- |
 | Belgium | `BEL` | 1900 | 2022 | 123 | 369 | Complete 123-year series |
@@ -80,6 +85,10 @@ Although all three indicators have the same overall temporal span, the row count
 | Portugal | `PRT` | 1900 | 2022 | 123 | 369 | Complete 123-year benchmark series |
 | Romania | `ROU` | 1900 | 2022 | 123 | 335 | 123-year span with internal missing years |
 
+Countries such as Belgium, Germany, Spain, France, Greece, Italy and Portugal have complete observations for all three indicators across the 1900–2022 period.
+
+Other countries have either: (i) shorter historical series, where observations begin after 1900; or (ii) internal gaps, where observations are absent for one or more years between the first and last available observations.
+
 ---
 ## 7. Missing information
 
@@ -96,7 +105,13 @@ The following countries contain internal gaps between their first and last recor
 | Romania   | gdp, pop            | 17                                   |
 
 
-## 8. Data Integrity & Staging Notes
-1. **Zero Null Key Fields**: All mandatory fields (`country_iso3`, `indicator_code`, `year`, `country_name`, `indicator_name`) are fully populated.
-2. **Primary Key Uniqueness**: The composite primary key `(country_iso3, indicator_code, year)` is strictly enforced and verified without duplicate conflicts.
-3. **Internal Gaps**: Romania contains 335 rows across a 1900–2022 time span (34 rows short of a full 369-row panel), reflecting missing historical years in the raw source.
+## 8. Data Quality and Limitations
+
+**Completeness**
+
+* The profiling results indicate that all fields are fully populated. However there are some missing observations at country-year-indicator level.
+
+**Missing records**
+
+* Missing observations occur for specific countries and periods.
+
