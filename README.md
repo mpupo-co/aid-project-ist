@@ -14,3 +14,7 @@ The data sources are:
 - [Maddison Project Database 2023](/project_data_sources_2627/maddison_indicators.csv): historical reconstruction from 1900 to 2022 of long-run GDP per capita, GDP and population
 - [World Bank World Development Indicators (WDI)](/project_data_sources_2627/wdi_indicators.csv): modern economic, structural and social indicators (GDP growth, GNI per capita, sector value added, employment by sector, life expectancy, urbanization, trade)
 - [Historical Events Dataset](/project_data_sources_2627/historical_events.csv): with 387 major economic, political, infrastructure and social events for Portugal and the comparison countries (1900-2025)
+
+
+## Slides
+- slides_35 -> [link](https://tecnicopt-my.sharepoint.com/:p:/g/personal/ist186476_m365_tecnico_pt/IQAIs5Jl4URCQIUlaFDMcycEASifnJvZwogZbZueB6D5fKc) 
