@@ -26,7 +26,7 @@ The table has a common global span of 1960–2025, but individual indicators and
 | `indicator_code` | `VARCHAR(30)` | **PK** | `NOT NULL` | World Bank / WDI indicator code|
 | `indicator_name` | `VARCHAR(100)` | — | `NOT NULL` | Full metric description |
 | `year` | `INT` | **PK** | `NOT NULL` | Observation year (1960–2025) |
-| `value` | `DECIMAL(24,6)` | — | `NULL` | Numerical value of the metric |
+| `value` | `DECIMAL(24,6)` | — | `NOT NULL` | Numerical value of the metric |
 | `loaded_at` | `TIMESTAMP` | — | `NOT NULL` | Ingestion audit timestamp (auto-populated by MySQL) |
 
 ---

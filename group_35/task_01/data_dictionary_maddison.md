@@ -24,7 +24,7 @@
 | `indicator_code` | `VARCHAR(50)` | **PK** | `NOT NULL` | Short metric identifier (`gdp`, `gdppc`, `pop`) |
 | `indicator_name` | `VARCHAR(100)` | — | `NOT NULL` | Full descriptive title of the economic metric |
 | `year` | `LINT` | **PK** | `NOT NULL` | Observation year (1900–2022) |
-| `value` | `DECIMAL(24,6)` | — | `NULL` | Numerical value of the indicator |
+| `value` | `DECIMAL(24,6)` | — | `NOT NULL` | Numerical value of the indicator |
 | `loaded_at` | `TIMESTAMP` | — | `NOT NULL` | Ingestion audit timestamp (auto-populated by MySQL) |
 
 ---

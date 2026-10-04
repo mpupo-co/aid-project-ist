@@ -23,8 +23,8 @@
 | `country_iso3` | `VARCHAR(3)` | — | `NOT NULL` | Standard 3-letter ISO code |
 | `country_name` | `VARCHAR(50)` | — | `NOT NULL` | Full country or entity name |
 | `event` | `VARCHAR(255)` | — | `NOT NULL` | Detailed textual description of the historical event |
-| `category` | `VARCHAR(50)` | — | `NULL` | Categorization (e.g., `Political`, `Economy`, `Financial`, `War`) |
-| `economic_impact` | `VARCHAR(100)` | — | `NULL` | Qualitative assessment of economic or social impact |
+| `category` | `VARCHAR(50)` | — | `NOT NULL` | Categorization (e.g., `Political`, `Economy`, `Financial`, `War`) |
+| `economic_impact` | `VARCHAR(100)` | — | `NOT NULL` | Qualitative assessment of economic or social impact |
 | `loaded_at` | `TIMESTAMP` | — | `NOT NULL` | Ingestion audit timestamp (auto-populated by MySQL) |
 
 **Primary key.** `(country_iso3, year)` is not unique. Adding `event` would make it unique, but it is a long text column and unwieldy as a key, so a surrogate `AUTO_INCREMENT` key (`event_id`) is used.
