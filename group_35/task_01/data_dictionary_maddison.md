@@ -4,7 +4,7 @@
 | Item | Description |
 | :--- | :--- |
 | **Staging Table Name** | `maddison_indicators` |
-| **Target Database** | MySQL (`DevelopmentDB`) |
+| **Target Database** | `DevelopmentDB` |
 | **Purpose** | Stores annual macroeconomic indicators for the selected European countries.| 
 | **Total Rows** | **4,349** |
 | **Distinct Entities** | **15 European Countries** |
@@ -58,6 +58,7 @@ The dataset spans **1900 to 2022** (123 distinct years).
 | `pop` | 1900 | 2022 | 123 | 1,444 |
 
 Although all three indicators have the same overall temporal span, the row counts indicate some country-year gaps.
+
 ---
 
 ## 6. Country-Level Breakdown & Historical Gaps
