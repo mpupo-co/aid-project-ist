@@ -4,7 +4,7 @@
 | Item | Description |
 | :--- | :--- |
 | **Staging Table Name** | `wdi_indicators` |
-| **Target Database** | MySQL (`DevelopmentDB`) |
+| **Target Database** | `DevelopmentDB` |
 | **Purpose** | Stores annual World Development Indicators for selected European countries and the European Union. |
 | **Total Rows** | **11,371** |
 | **Distinct Entities** | **16 Entities** (15 European Countries + `EUU` European Union) |
@@ -32,25 +32,25 @@ The table has a common global span of 1960–2025, but individual indicators and
 ---
 
 ## 3. Indicator Catalog & Target Dimension Mapping
-| Indicator Code | Indicator Description | Unit | Target Fact Table |
-| :--- | :--- | :--- | :--- |
-| `NE.EXP.GNFS.ZS` | Exports of goods and services | % of GDP | `FACT_ECONOMY` |
-| `NE.IMP.GNFS.ZS` | Imports of goods and services | % of GDP | `FACT_ECONOMY` |
-| `NV.AGR.TOTL.CD` | Agriculture, forestry & fishing value added | Current US$ | `FACT_SECTOR` |
-| `NV.AGR.TOTL.ZS` | Agriculture value added | % of GDP | `FACT_SECTOR` |
-| `NV.IND.MANF.CD` | Manufacturing value added | Current US$ | `FACT_SECTOR` |
-| `NV.IND.MANF.ZS` | Manufacturing value added | % of GDP | `FACT_SECTOR` |
-| `NV.IND.TOTL.CD` | Industry including construction value added | Current US$ | `FACT_SECTOR` |
+| Indicator Code | Indicator Description | Unit |
+| :--- | :--- | :--- |
+| `NE.EXP.GNFS.ZS` | Exports of goods and services | % of GDP | 
+| `NE.IMP.GNFS.ZS` | Imports of goods and services | % of GDP | 
+| `NV.AGR.TOTL.CD` | Agriculture, forestry & fishing value added | Current US$ | 
+| `NV.AGR.TOTL.ZS` | Agriculture value added | % of GDP |
+| `NV.IND.MANF.CD` | Manufacturing value added | Current US$ | 
+| `NV.IND.MANF.ZS` | Manufacturing value added | % of GDP | 
+| `NV.IND.TOTL.CD` | Industry including construction value added | Current US$ |
 | `NV.IND.TOTL.ZS` | Industry value added | % of GDP | `FACT_SECTOR` |
 | `NV.SRV.TOTL.CD` | Services value added | Current US$ | `FACT_SECTOR` |
 | `NV.SRV.TOTL.ZS` | Services value added | % of GDP | `FACT_SECTOR` |
 | `NY.GDP.MKTP.KD.ZG`| Annual GDP growth | Annual % | `FACT_ECONOMY` |
-| `NY.GNP.PCAP.CD` | GNI per capita (Atlas method) | Current US$ | `FACT_ECONOMY` |
-| `SL.AGR.EMPL.ZS` | Employment in agriculture | % of total employment | `FACT_SECTOR` / `FACT_SOCIETY` |
-| `SL.IND.EMPL.ZS` | Employment in industry | % of total employment | `FACT_SECTOR` / `FACT_SOCIETY` |
-| `SL.SRV.EMPL.ZS` | Employment in services | % of total employment | `FACT_SECTOR` / `FACT_SOCIETY` |
+| `NY.GNP.PCAP.CD` | GNI per capita (Atlas method) | Current US$ | 
+| `SL.AGR.EMPL.ZS` | Employment in agriculture | % of total employment | 
+| `SL.IND.EMPL.ZS` | Employment in industry | % of total employment | 
+| `SL.SRV.EMPL.ZS` | Employment in services | % of total employment | 
 | `SP.DYN.LE00.IN` | Life expectancy at birth | Years | `FACT_SOCIETY` |
-| `SP.URB.TOTL.IN.ZS`| Urban population share | % of total population | `FACT_SOCIETY` |
+| `SP.URB.TOTL.IN.ZS`| Urban population share | % of total population |
 
 ---
 
@@ -90,7 +90,16 @@ The table has a common global span of 1960–2025, but individual indicators and
 
 ---
 
-## 6. Data Integrity & Validation Rules
-1. **Primary Key Constraints**: `(country_iso3, indicator_code, year)` uniquely identifies every record.
-2. **Negative Growth Validation**: The 120 negative values in `NY.GDP.MKTP.KD.ZG` represent valid economic contractions (e.g., 1974–1975 oil shock, 2008–2009 financial crisis, 2020 COVID-19 pandemic).
-3. **No Null Mandatory Keys**: All entity codes, names, indicator codes, and years are 100% populated.
+## 6. Data Quality and Limitations
+
+ **Completeness**
+ 
+ * All the fields are fully populated. However, the row counts reveal coverage gaps within several indicator series.
+
+**Missing and uneven coverage**
+
+* The WDI data does not provide a uniform historical panel across all indicators. The main limitations are: (i) GDP growth starts in 1961 rather than 1960. (ii) GNI per capita starts in 1962. (iii) Employment indicators only begin in 1991. (iv) Life expectancy ends in 2024, one year before the end of the overall dataset. (v) Sector indicators have substantially less complete historical coverage than the broader economic and social indicators. (vi) Some countries have later observations for particular indicators.
+
+**Negative Values**
+
+* The dataset contains 120 negative GDP-growth observations. These are valid values because negative annual GDP growth is economically possible and represents contraction.
