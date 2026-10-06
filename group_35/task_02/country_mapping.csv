@@ -1,0 +1,17 @@
+iso3_code,country_name,country_group
+BEL,Belgium                                           ,Western Union
+CZE,Czechia                                           ,Central/Eastern Europe
+DEU,Germany                                           ,Western Union
+ESP,Spain                                             ,Western Union
+EST,Estonia                                           ,Post-Soviet
+EUU,European Union                                    ,Benchmark
+FRA,France                                            ,Western Union
+GRC,Greece                                            ,Western Union
+HUN,Hungary                                           ,Central/Eastern Europe
+IRL,Ireland                                           ,Western Union
+ITA,Italy                                             ,Western Union
+LTU,Lithuania                                         ,Post-Soviet
+LVA,Latvia                                            ,Post-Soviet
+POL,Poland                                            ,Central/Eastern Europe
+PRT,Portugal                                          ,Focus
+ROU,Romania                                           ,Central/Eastern Europe
