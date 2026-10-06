@@ -21,7 +21,6 @@ CREATE TABLE DIM_TIME (
     UNIQUE (year)
 );
 
-
 CREATE TABLE DIM_SECTOR (
     sector_key   INT AUTO_INCREMENT,
     sector_name  VARCHAR(50) NOT NULL,
@@ -66,7 +65,7 @@ CREATE TABLE FACT_SECTOR (
     sector_key          INT,
     value_added_pct_gdp DECIMAL(24,6),
     value_added_usd     DECIMAL(24,6),
-    employment_pct      DECIMAL(24,6),   -- empty for Manufacturing (no source series)
+    employment_pct      DECIMAL(24,6),   
     PRIMARY KEY (country_key, time_key, sector_key),
     FOREIGN KEY (country_key) REFERENCES DIM_COUNTRY (country_key),
     FOREIGN KEY (time_key)    REFERENCES DIM_TIME (time_key),

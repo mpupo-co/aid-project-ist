@@ -34,9 +34,3 @@ CREATE TABLE historical_events (
   economic_impact VARCHAR(100) NOT NULL,
   loaded_at       TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
-
-CREATE TABLE country_mapping (
-    country_iso3   CHAR(3)      NOT NULL PRIMARY KEY,
-    country_name   VARCHAR(50)  NOT NULL,
-    country_group  VARCHAR(30)  NOT NULL
-);
