@@ -78,10 +78,12 @@ CREATE TABLE BRIDGE_EVENT (
     event_key       INT AUTO_INCREMENT,
     country_key     INT          NOT NULL,
     time_key        INT          NOT NULL,
+    event_id		INT			 NOT NULL,
     event           VARCHAR(255) NOT NULL,
     category        VARCHAR(50)  NOT NULL,
     economic_impact VARCHAR(100) NOT NULL,
     PRIMARY KEY (event_key),
+    UNIQUE (event_id),
     FOREIGN KEY (country_key) REFERENCES DIM_COUNTRY (country_key),
     FOREIGN KEY (time_key)    REFERENCES DIM_TIME (time_key)
 );
