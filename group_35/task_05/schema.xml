@@ -1,0 +1,114 @@
+<Schema name="Portugal Development DW">
+  <Dimension visible="true" highCardinality="false" name="Country">
+    <Hierarchy visible="true" hasAll="true" allMemberName="All Countries" primaryKey="country_key">
+      <Table name="DIM_COUNTRY">
+      </Table>
+      <Level name="Country Group" visible="true" column="country_group" type="String" uniqueMembers="true" levelType="Regular" hideMemberIf="Never">
+      </Level>
+      <Level name="Country" visible="true" column="country_name" type="String" uniqueMembers="true" levelType="Regular" hideMemberIf="Never">
+      </Level>
+    </Hierarchy>
+  </Dimension>
+  <Dimension visible="true" highCardinality="false" name="Time">
+    <Hierarchy visible="true" hasAll="true" allMemberName="All Years" primaryKey="time_key">
+      <Table name="DIM_TIME">
+      </Table>
+      <Level name="Decade" visible="true" column="decade" type="Numeric" uniqueMembers="true" levelType="Regular" hideMemberIf="Never">
+      </Level>
+      <Level name="Year" visible="true" column="year" type="Numeric" uniqueMembers="true" levelType="Regular" hideMemberIf="Never">
+      </Level>
+    </Hierarchy>
+  </Dimension>
+  <Dimension visible="true" highCardinality="false" name="Sector">
+    <Hierarchy visible="true" hasAll="true" allMemberName="All Sectors" primaryKey="sector_key">
+      <Table name="DIM_SECTOR">
+      </Table>
+      <Level name="Broad Sector" visible="true" column="broad_sector" type="String" uniqueMembers="true" levelType="Regular" hideMemberIf="Never">
+      </Level>
+      <Level name="Sector" visible="true" column="sector_name" type="String" uniqueMembers="true" levelType="Regular" hideMemberIf="Never">
+      </Level>
+    </Hierarchy>
+  </Dimension>
+  <Cube name="Economy" visible="true" cache="true" enabled="true">
+    <Table name="FACT_ECONOMY">
+    </Table>
+    <DimensionUsage source="Country" name="Country" visible="true" foreignKey="country_key" highCardinality="false">
+    </DimensionUsage>
+    <DimensionUsage source="Time" name="Time" visible="true" foreignKey="time_key" highCardinality="false">
+    </DimensionUsage>
+    <Measure name="GDP per Capita" column="gdp_per_capita" formatString="#,##0.00" aggregator="avg">
+    </Measure>
+    <Measure name="GDP" column="gdp" formatString="#,##0" aggregator="avg">
+    </Measure>
+    <Measure name="GDP Growth Pct" column="gdp_growth_pct" formatString="#,##0.00" aggregator="avg">
+    </Measure>
+    <Measure name="Exports Pct GDP" column="exports_pct_gdp" formatString="#,##0.00" aggregator="avg">
+    </Measure>
+    <Measure name="Imports Pct GDP" column="imports_pct_gdp" formatString="#,##0.00" aggregator="avg">
+    </Measure>
+  </Cube>
+  <Cube name="Society" visible="true" cache="true" enabled="true">
+    <Table name="FACT_SOCIETY">
+    </Table>
+    <DimensionUsage source="Country" name="Country" visible="true" foreignKey="country_key" highCardinality="false">
+    </DimensionUsage>
+    <DimensionUsage source="Time" name="Time" visible="true" foreignKey="time_key" highCardinality="false">
+    </DimensionUsage>
+    <Measure name="Population" column="population" formatString="#,##0" aggregator="avg">
+    </Measure>
+    <Measure name="GNI per Capita" column="gni_per_capita" formatString="#,##0.00" aggregator="avg">
+    </Measure>
+    <Measure name="Life Expectancy" column="life_expectancy" formatString="#,##0.00" aggregator="avg">
+    </Measure>
+    <Measure name="Urban Pop Pct" column="urban_pop_pct" formatString="#,##0.00" aggregator="avg">
+    </Measure>
+  </Cube>
+  <Cube name="Sectors" visible="true" cache="true" enabled="true">
+    <Table name="FACT_SECTOR">
+    </Table>
+    <DimensionUsage source="Country" name="Country" visible="true" foreignKey="country_key" highCardinality="false">
+    </DimensionUsage>
+    <DimensionUsage source="Time" name="Time" visible="true" foreignKey="time_key" highCardinality="false">
+    </DimensionUsage>
+    <DimensionUsage source="Sector" name="Sector" visible="true" foreignKey="sector_key" highCardinality="false">
+    </DimensionUsage>
+    <Measure name="Value Added Pct GDP" column="value_added_pct_gdp" formatString="#,##0.00" aggregator="avg">
+    </Measure>
+    <Measure name="Value Added USD" column="value_added_usd" formatString="#,##0" aggregator="avg">
+    </Measure>
+    <Measure name="Employment Pct" column="employment_pct" formatString="#,##0.00" aggregator="avg">
+    </Measure>
+  </Cube>
+  <VirtualCube enabled="true" name="DevelopmentCube" visible="true">
+    <VirtualCubeDimension visible="true" highCardinality="false" name="Country">
+    </VirtualCubeDimension>
+    <VirtualCubeDimension visible="true" highCardinality="false" name="Time">
+    </VirtualCubeDimension>
+    <VirtualCubeDimension visible="true" highCardinality="false" name="Sector">
+    </VirtualCubeDimension>
+    <VirtualCubeMeasure cubeName="Economy" name="[Measures].[GDP per Capita]">
+    </VirtualCubeMeasure>
+    <VirtualCubeMeasure cubeName="Economy" name="[Measures].[GDP]">
+    </VirtualCubeMeasure>
+    <VirtualCubeMeasure cubeName="Economy" name="[Measures].[GDP Growth Pct]">
+    </VirtualCubeMeasure>
+    <VirtualCubeMeasure cubeName="Economy" name="[Measures].[Exports Pct GDP]">
+    </VirtualCubeMeasure>
+    <VirtualCubeMeasure cubeName="Economy" name="[Measures].[Imports Pct GDP]">
+    </VirtualCubeMeasure>
+    <VirtualCubeMeasure cubeName="Society" name="[Measures].[Population]">
+    </VirtualCubeMeasure>
+    <VirtualCubeMeasure cubeName="Society" name="[Measures].[GNI per Capita]">
+    </VirtualCubeMeasure>
+    <VirtualCubeMeasure cubeName="Society" name="[Measures].[Life Expectancy]">
+    </VirtualCubeMeasure>
+    <VirtualCubeMeasure cubeName="Society" name="[Measures].[Urban Pop Pct]">
+    </VirtualCubeMeasure>
+    <VirtualCubeMeasure cubeName="Sectors" name="[Measures].[Value Added Pct GDP]">
+    </VirtualCubeMeasure>
+    <VirtualCubeMeasure cubeName="Sectors" name="[Measures].[Value Added USD]">
+    </VirtualCubeMeasure>
+    <VirtualCubeMeasure cubeName="Sectors" name="[Measures].[Employment Pct]">
+    </VirtualCubeMeasure>
+  </VirtualCube>
+</Schema>
