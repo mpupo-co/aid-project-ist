@@ -64,31 +64,31 @@
       </line>
       <line>
         <item>ESP</item>
-        <item>Western Union</item>
+        <item>Western Europe</item>
       </line>
       <line>
         <item>FRA</item>
-        <item>Western Union</item>
+        <item>Western Europe</item>
       </line>
       <line>
         <item>DEU</item>
-        <item>Western Union</item>
+        <item>Western Europe</item>
       </line>
       <line>
         <item>BEL</item>
-        <item>Western Union</item>
+        <item>Western Europe</item>
       </line>
       <line>
         <item>ITA</item>
-        <item>Western Union</item>
+        <item>Western Europe</item>
       </line>
       <line>
         <item>IRL</item>
-        <item>Western Union</item>
+        <item>Western Europe</item>
       </line>
       <line>
         <item>GRC</item>
-        <item>Western Union</item>
+        <item>Western Europe</item>
       </line>
       <line>
         <item>POL</item>
@@ -127,15 +127,23 @@
       <field>
         <length>-1</length>
         <precision>-1</precision>
+        <currency/>
         <set_empty_string>N</set_empty_string>
         <name>iso3_code</name>
+        <format/>
+        <group/>
+        <decimal/>
         <type>String</type>
       </field>
       <field>
         <length>-1</length>
         <precision>-1</precision>
+        <currency/>
         <set_empty_string>N</set_empty_string>
         <name>country_group</name>
+        <format/>
+        <group/>
+        <decimal/>
         <type>String</type>
       </field>
     </fields>
@@ -161,16 +169,19 @@
         <length>-2</length>
         <name>iso3_code</name>
         <precision>-2</precision>
+        <rename/>
       </field>
       <field>
         <length>-2</length>
         <name>country_name</name>
         <precision>-2</precision>
+        <rename/>
       </field>
       <field>
         <length>-2</length>
         <name>country_group</name>
         <precision>-2</precision>
+        <rename/>
       </field>
       <select_unspecified>N</select_unspecified>
     </fields>
@@ -360,7 +371,7 @@ FROM DevelopmentDB.wdi_indicators</sql>
         <nullif/>
         <trim_type>none</trim_type>
         <roundingType>half_even</roundingType>
-        <length>50</length>
+        <length>-1</length>
         <precision>-1</precision>
       </field>
       <field>
