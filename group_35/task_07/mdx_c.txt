@@ -1,0 +1,37 @@
+WITH
+    MEMBER [Measures].[Portugal GDPpc] AS
+        (
+            [Measures].[GDP per Capita],
+            [Country].[Country].[Focus].[Portugal]
+        )
+
+    MEMBER [Measures].[Portugal Relative GDPpc %] AS
+        IIF(
+            IsEmpty([Measures].[Portugal GDPpc])
+            OR [Measures].[Portugal GDPpc] = 0,
+            NULL,
+            [Measures].[GDP per Capita]
+                / [Measures].[Portugal GDPpc]
+        ),
+        FORMAT_STRING = '0.0%'
+
+SELECT
+    {
+        [Measures].[GDP per Capita],
+        [Measures].[Portugal GDPpc],
+        [Measures].[Portugal Relative GDPpc %]
+    } ON COLUMNS,
+
+    NON EMPTY
+        CROSSJOIN(
+            [Time].[Time].[Year].Members,
+            UNION(
+                { [Country].[Country].[Focus].[Portugal] },
+                DESCENDANTS(
+                    [Country].[Country].[Western Europe],
+                    [Country].[Country].[Country]
+                )
+            )
+        ) ON ROWS
+
+FROM [DevelopmentCube]
