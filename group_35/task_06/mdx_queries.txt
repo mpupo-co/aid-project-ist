@@ -1,0 +1,33 @@
+AID 2026/2027 - Task 6: MDX queries
+
+QUERY 1 - Portugal's GDP per capita as a ratio of Spain's, by decade (1960-2020)
+
+WITH
+  MEMBER [Measures].[GDPpc Portugal] AS
+    ([Measures].[GDP per Capita], [Country].[Focus].[Portugal]),
+    FORMAT_STRING = '#,##0'
+  MEMBER [Measures].[GDPpc Spain] AS
+    ([Measures].[GDP per Capita], [Country].[Western Europe].[Spain]),
+    FORMAT_STRING = '#,##0'
+  MEMBER [Measures].[Ratio PT/ES] AS
+    IIF(IsEmpty([Measures].[GDPpc Spain]) OR [Measures].[GDPpc Spain] = 0,
+        NULL,
+        [Measures].[GDPpc Portugal] / [Measures].[GDPpc Spain]),
+    FORMAT_STRING = '0.000'
+SELECT
+  { [Measures].[GDPpc Portugal], [Measures].[GDPpc Spain], [Measures].[Ratio PT/ES] } ON COLUMNS,
+  { [Time].[1960] : [Time].[2020] } ON ROWS
+FROM [DevelopmentCube]
+
+
+QUERY 2 - Portugal's value added (% of GDP) at Broad Sector and Sector level,
+with 1995 and 2020 on the columns as tuples.
+
+SELECT
+  { ([Measures].[Value Added Pct GDP], [Time].[1990].[1995]),
+    ([Measures].[Value Added Pct GDP], [Time].[2020].[2020]) } ON COLUMNS,
+  Hierarchize(
+    Descendants([Sector].[All Sectors], [Sector].[Broad Sector], SELF_AND_AFTER)
+  ) ON ROWS
+FROM [DevelopmentCube]
+WHERE ([Country].[Country].[Focus].[Portugal])
